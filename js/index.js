@@ -8,16 +8,16 @@ import {
 
 import AV from 'avoscloud-sdk';
 
-import Message from './components/messages.js';
+import MessageList from './components/messageList.js';
 import Magic from './components/magic.js';
 
-AV.initialize('barRELKtqSJTsSmQp4i4qQGq-gzGzoHsf', 'zfaGe33WatcyWKwnfzvxyyhf')
+AV.initialize('barRELKtqSJTsSmQp4i4qQGq-gzGzoHsz', 'zfaGe33WatcyWKwnfzvxyyhx')
 
 class du extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Message />
+        <MessageList />
         <Magic />
       </View>
     );
