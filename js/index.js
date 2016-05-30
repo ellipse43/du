@@ -3,23 +3,27 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  NavigatorIOS
 } from 'react-native';
 
 import AV from 'avoscloud-sdk';
 
-import MessageList from './components/messageList.js';
-import Magic from './components/magic.js';
+import HomeView from './components/homeView.js'
 
 AV.initialize('barRELKtqSJTsSmQp4i4qQGq-gzGzoHsz', 'zfaGe33WatcyWKwnfzvxyyhx')
 
 class du extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <MessageList />
-        <Magic />
-      </View>
+      <NavigatorIOS
+        style={styles.container}
+        initialRoute={{
+          title: '首页',
+          navigationBarHidden: true,
+          component: HomeView
+        }}
+      />
     );
   }
 }
@@ -27,16 +31,9 @@ class du extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: '#FFFFFF',
     marginTop: 20
-  },
-  welcome: {
-    fontSize: 30,
-    textAlign: 'center',
-    margin: 10,
-  },
+  }
 });
 
 AppRegistry.registerComponent('du', () => du);
