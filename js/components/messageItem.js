@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {socialFormatTime} from '../utils/time';
 
 export default class MessageItem extends React.Component {
   constructor(props) {
@@ -11,7 +12,10 @@ export default class MessageItem extends React.Component {
       <View>
         <View style={styles.row}>
           <Text style={styles.message} allowFontScaling={true}>
-            {this.props.rowData}
+            {this.props.rowData.content}
+          </Text>
+          <Text>
+            {socialFormatTime(this.props.rowData.created)}
           </Text>
         </View>
       </View>

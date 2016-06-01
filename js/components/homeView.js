@@ -12,7 +12,11 @@ export default class HomeView extends React.Component {
 
   messageCreate(content) {
     console.log('...', content);
-    this.setState({newMessage: content});
+    this.setState({newMessage: {
+      author: 'ellipse42',
+      content: content,
+      created: Date()
+    }});
   }
 
   render() {
@@ -28,8 +32,6 @@ export default class HomeView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: '#FFFFFF'
   }
 });

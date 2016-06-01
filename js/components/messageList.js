@@ -7,7 +7,13 @@ export default class MessageList extends React.Component {
   constructor(props) {
     super(props);
     let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    const items = ['周末好无聊啊。。。。', '我靠，日子过得这个鸟样，麻痹 如果有天我走去。。。出国去哪呢', '我生气了 😢', '为啥呢？👃', '低调内敛', '成熟稳重', '周末好无聊啊。。。。', '我靠，日子过得这个鸟样', '我生气了 😢', '为啥呢？👃', '低调内敛', '成熟稳重', '周末好无聊啊。。。。', '我靠，日子过得这个鸟样', '我生气了 😢', '为啥呢？👃', '低调内敛', '成熟稳重'];
+    const items = [
+      {
+        author: 'ellipse42',
+        content: '马勒戈壁',
+        created: Date(),
+      }
+    ]
     this.state = ({items: items, dataSource: ds.cloneWithRows(items)});
   }
 
@@ -30,7 +36,7 @@ export default class MessageList extends React.Component {
     )
   }
 
-  renderRow(rowData: string, sectionID: number, rowID: number) {
+  renderRow(rowData: Map, sectionID: number, rowID: number) {
     return (
       <MessageItem
         rowData={rowData}

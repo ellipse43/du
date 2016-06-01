@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import  React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -8,10 +8,9 @@ import {
 } from 'react-native';
 
 import AV from 'avoscloud-sdk';
+import HomeView from './components/homeView.js';
 
-import HomeView from './components/homeView.js'
-
-AV.initialize('barRELKtqSJTsSmQp4i4qQGq-gzGzoHsz', 'zfaGe33WatcyWKwnfzvxyyhx')
+AV.initialize('barRELKtqSJTsSmQp4i4qQGq-gzGzoHsz', 'zfaGe33WatcyWKwnfzvxyyhx');
 
 class du extends Component {
   render() {
