@@ -7,13 +7,19 @@ import {NavigatorIOS, View, StyleSheet} from 'react-native';
 export default class HomeView extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {newMessage: undefined};
+  }
+
+  messageCreate(content) {
+    console.log('...', content);
+    this.setState({newMessage: content});
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <MessageList />
-        <Magic navigator={this.props.navigator} />
+        <MessageList newMessage={this.state.newMessage} />
+        <Magic navigator={this.props.navigator} messageCreate={this.messageCreate.bind(this)} />
       </View>
     )
   }

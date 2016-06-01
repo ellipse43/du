@@ -4,14 +4,28 @@ import Message from './message.js';
 
 export default class Magic extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
   }
 
   _onPressButton() {
     this.props.navigator.push({
       title: '❤️独°宣言❤️',
       component: Message,
-      navigationBarHidden: false
+      navigationBarHidden: false,
+      leftButtonTitle: '取消',
+      passProps: {
+        ref: (component) => {
+          this.pushComponent = component
+        },
+        onMessageCreate: this.props.messageCreate
+      },
+      onLeftButtonPress: () => {
+        this.props.navigator.pop();
+      },
+      rightButtonTitle: '发送',
+      onRightButtonPress: () => {
+        this.pushComponent && this.pushComponent.call();
+      }
     })
   }
 

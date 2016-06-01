@@ -21,12 +21,10 @@ export default class MessageItem extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
-    // flexDirection: 'row',
     padding: 10,
     backgroundColor: '#F6F6F6'
   },
   message: {
-    // fontFamily:
     fontSize: 20,
     lineHeight: 25,
     marginLeft: 5
