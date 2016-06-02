@@ -43,6 +43,7 @@ export default class Magic extends React.Component {
 const styles = StyleSheet.create({
   magic: {
     alignItems: 'center',
-    padding: 20
+    padding: 20,
+    backgroundColor: '#245232'
   }
 });

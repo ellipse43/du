@@ -2,19 +2,25 @@ import React from 'react';
 import { View, StyleSheet, Text, ListView, RecyclerViewBackedScrollView } from 'react-native';
 
 import MessageItem from './messageItem.js';
+import { MessageModel, messageQuery} from './model.js';
 
 export default class MessageList extends React.Component {
   constructor(props) {
     super(props);
+
     let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    const items = [
-      {
-        author: 'ellipse42',
-        content: '马勒戈壁',
-        created: Date(),
-      }
-    ]
+    const items = [];
     this.state = ({items: items, dataSource: ds.cloneWithRows(items)});
+  }
+
+  componentWillMount() {
+    messageQuery.limit(2);
+    messageQuery.addDescending('createdAt');
+    messageQuery.find().then((items) => {
+      this.setState({items: items, dataSource: this.state.dataSource.cloneWithRows(items)});
+    }, (error) => {
+      console.log(`Error: ${error.code} ${error.message}`);
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -22,15 +28,21 @@ export default class MessageList extends React.Component {
       return;
     }
     if (nextProps.newMessage) {
+      const msg = MessageModel.new(nextProps.newMessage);
+      msg.save().then((msg) => {
+        console.log('Create');
+      }, (error) => {
+        console.log(`Error: ${error.code} ${error.message}`);
+      });
       let items = this.state.items.slice();
-      items.unshift(nextProps.newMessage);
+      items.unshift(msg);
       this.setState({items: items, dataSource: this.state.dataSource.cloneWithRows(items)});
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.newMessage != this.props.newMessage;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return nextProps.newMessage != this.props.newMessage;
+  // }
 
   render() {
     return (

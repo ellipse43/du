@@ -5,6 +5,11 @@ import {socialFormatTime} from '../utils/time';
 export default class MessageItem extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {content: this.props.rowData.get('content'), created: this.props.rowData.get('created')};
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({content: nextProps.rowData.get('content'), created: nextProps.rowData.get('created')});
   }
 
   render() {
@@ -12,10 +17,10 @@ export default class MessageItem extends React.Component {
       <View>
         <View style={styles.row}>
           <Text style={styles.message} allowFontScaling={true}>
-            {this.props.rowData.content}
+            {this.state.content}
           </Text>
           <Text>
-            {socialFormatTime(this.props.rowData.created)}
+            {socialFormatTime(this.state.created)}
           </Text>
         </View>
       </View>
