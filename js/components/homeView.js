@@ -11,18 +11,21 @@ export default class HomeView extends React.Component {
   }
 
   messageCreate(content) {
-    console.log('...', content);
     this.setState({newMessage: {
       author: 'ellipse42',
       content: content,
       created: Date()
     }});
   }
-
   render() {
+    let messageList = <MessageList />
+    if (this.state.newMessage) {
+      messageList = <MessageList newMessage={this.state.newMessage} />
+    }
+
     return (
       <View style={styles.container}>
-        <MessageList newMessage={this.state.newMessage} />
+        {messageList}
         <Magic navigator={this.props.navigator} messageCreate={this.messageCreate.bind(this)} />
       </View>
     )

@@ -18,11 +18,18 @@ export default class MessageList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.newMessage === this.props.newMessage) {
+      return;
+    }
     if (nextProps.newMessage) {
       let items = this.state.items.slice();
       items.unshift(nextProps.newMessage);
-      this.setState({dataSource: this.state.dataSource.cloneWithRows(items)});
+      this.setState({items: items, dataSource: this.state.dataSource.cloneWithRows(items)});
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.newMessage != this.props.newMessage;
   }
 
   render() {

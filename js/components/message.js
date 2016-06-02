@@ -4,23 +4,16 @@ import {View, Text, TextInput, StyleSheet, Alert} from 'react-native';
 export default class Message extends React.Component {
   constructor(props) {
     super(props);
-
-    const route = this.props.navigator.navigationContext.currentRoute;
-    route.onRightButtonPress = () => {
-      this.call();
-    };
-    this.props.navigator.replace(route);
     this.state = {content: ''};
   }
 
   call() {
-    // console.log(this.state.content);
     if (this.state.content.length < 1) {
       Alert.alert('警告', '输入字数太少');
       return;
     }
-    this.props.navigator.pop();
     this.props.onMessageCreate(this.state.content);
+    this.props.navigator.pop();
   }
 
   render() {
