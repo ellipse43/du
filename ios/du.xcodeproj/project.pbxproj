@@ -620,6 +620,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.lgtm.du;
 				PRODUCT_NAME = du;
 				PROVISIONING_PROFILE = "";
 			};
@@ -642,6 +643,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.lgtm.du;
 				PRODUCT_NAME = du;
 				PROVISIONING_PROFILE = "";
 			};
