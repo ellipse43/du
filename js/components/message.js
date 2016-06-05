@@ -1,10 +1,10 @@
 import React from 'react';
-import {View, Text, TextInput, StyleSheet, Alert, TouchableOpacity, NativeModules} from 'react-native';
+import {View, Text, TextInput, Image, StyleSheet, Alert, TouchableOpacity, NativeModules} from 'react-native';
 
 export default class Message extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {content: ''};
+    this.state = {content: '', avatarSources: []};
   }
 
   call() {
@@ -18,12 +18,12 @@ export default class Message extends React.Component {
 
   _onImageSelect() {
     const options = {
-      title: 'Select Avatar', // specify null or empty string to remove the title
-      cancelButtonTitle: 'Cancel',
-      takePhotoButtonTitle: 'Take Photo...', // specify null or empty string to remove this button
-      chooseFromLibraryButtonTitle: 'Choose from Library...', // specify null or empty string to remove this button
-      cameraType: 'back', // 'front' or 'back'
-      mediaType: 'photo', // 'photo' or 'video'
+      title: '',
+      cancelButtonTitle: '取消',
+      takePhotoButtonTitle: '拍照', // specify null or empty string to remove this button
+      chooseFromLibraryButtonTitle: '选择照片', // specify null or empty string to remove this button
+      cameraType: '返回', // 'front' or 'back'
+      mediaType: '照片', // 'photo' or 'video'
       videoQuality: 'high', // 'low', 'medium', or 'high'
       durationLimit: 10, // video recording max time in seconds
       maxWidth: 100, // photos only
@@ -55,8 +55,12 @@ export default class Message extends React.Component {
       else {
         // const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
         const source = {uri: response.uri.replace('file://', ''), isStatic: true};
+
+        let avatarSources = this.state.avatarSources.slice();
+        avatarSources.push(source);
+
         this.setState({
-          avatarSource: source
+          avatarSources: avatarSources
         });
       }
     });
@@ -66,11 +70,20 @@ export default class Message extends React.Component {
     return (
       <View style={styles.container} >
         <TextInput multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
+        <View style={styles.imageTool}>
+        {this.state.avatarSources.map((item) => {
+          return (
+            <Image
+              style={styles.avatar}
+              source={{uri: item.uri}} />
+          )
+        })}
         <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} >
           <Text>
             +
           </Text>
         </TouchableOpacity>
+        </View>
       </View>
     )
   }
@@ -87,6 +100,10 @@ const styles = StyleSheet.create({
     margin: 5,
     fontSize: 18
   },
+  imageTool: {
+    flex: 1,
+    flexDirection: 'row'
+  },
   imageSelect: {
     width: 40,
     height: 40,
@@ -94,5 +111,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFBBAA'
+  },
+  avatar: {
+    marginLeft: 5,
+    width: 40,
+    height: 40
   }
 })
