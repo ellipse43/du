@@ -10,11 +10,12 @@ export default class HomeView extends React.Component {
     this.state = {newMessage: undefined};
   }
 
-  messageCreate(content) {
+  messageCreate(content, imgs) {
     this.setState({newMessage: {
       author: 'ellipse42',
       content: content,
-      created: Date()
+      created: Date(),
+      imgs: imgs
     }});
   }
   render() {
