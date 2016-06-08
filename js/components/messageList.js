@@ -1,7 +1,10 @@
+'use strict';
+
 import React from 'react';
 import { View, StyleSheet, Text, ListView, RecyclerViewBackedScrollView, RefreshControl} from 'react-native';
 
-import MessageItem from './messageItem.js';
+import AV from 'avoscloud-sdk';
+import MessageItemView from './MessageItem.js';
 import { MessageModel, messageQuery} from './model.js';
 
 export default class MessageList extends React.Component {
@@ -10,7 +13,13 @@ export default class MessageList extends React.Component {
 
     let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     const items = [];
-    this.state = ({isRefreshing: false, isEndReached: false, isLoading: false, items: items, dataSource: ds.cloneWithRows(items)});
+    this.state = {
+      isRefreshing: false,
+      isEndReached: false,
+      isLoading: false,
+      items: items,
+      dataSource: ds.cloneWithRows(items),
+    };
   }
 
   componentWillMount() {
@@ -27,22 +36,25 @@ export default class MessageList extends React.Component {
     if (nextProps.newMessage === this.props.newMessage) {
       return;
     }
+
     if (nextProps.newMessage) {
-      const msg = MessageModel.new(nextProps.newMessage);
-      msg.save().then((msg) => {
-        console.log('Create');
-      }, (error) => {
-        console.log(`Error: ${error.code} ${error.message}`);
+      AV.User.currentAsync().then((currentUser) => {
+        const msg = MessageModel.new(nextProps.newMessage);
+        msg.set('ACL', new AV.ACL(currentUser));
+        msg.save().then((msg) => {
+          console.log('Create');
+        }, (error) => {
+          console.log(`Error: ${error.code} ${error.message}`);
+        });
+        let items = this.state.items.slice();
+        items.unshift(msg);
+        this.setState({
+          items: items,
+          dataSource: this.state.dataSource.cloneWithRows(items),
+        });
       });
-      let items = this.state.items.slice();
-      items.unshift(msg);
-      this.setState({items: items, dataSource: this.state.dataSource.cloneWithRows(items)});
     }
   }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return nextProps.newMessage != this.props.newMessage;
-  // }
 
   _onRefresh() {
     this.setState({isRefreshing: true});
@@ -69,7 +81,11 @@ export default class MessageList extends React.Component {
       }
       let items = this.state.items.slice();
       items.push.apply(items, rs);
-      this.setState({isLoading: false, items: items, dataSource: this.state.dataSource.cloneWithRows(items)});
+      this.setState({
+        isLoading: false,
+        items: items,
+        dataSource: this.state.dataSource.cloneWithRows(items),
+      });
     }, (error) => {
       console.log(`Error: ${error.code} ${error.message}`);
     });
@@ -78,13 +94,6 @@ export default class MessageList extends React.Component {
   render() {
     return (
       <ListView
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.isRefreshing}
-            onRefresh={this._onRefresh.bind(this)}
-            title='加载中...'
-          />
-        }
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
@@ -97,7 +106,7 @@ export default class MessageList extends React.Component {
 
   renderRow(rowData: Map, sectionID: number, rowID: number) {
     return (
-      <MessageItem
+      <MessageItemView
         rowData={rowData}
         sectionID={sectionID}
         rowID={rowID}
@@ -108,8 +117,8 @@ export default class MessageList extends React.Component {
 
 const styles = StyleSheet.create({
   separator: {
-    height: 1,
-    backgroundColor: '#CCCCCC'
+    height: 2,
+    backgroundColor: '#EDEDED'
   }
 });
 

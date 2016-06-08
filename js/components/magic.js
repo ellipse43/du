@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, Text} from 'react-native';
-import Message from './message.js';
+import {StyleSheet, TouchableOpacity, Text, View, Image} from 'react-native';
+import MessageView from './Message.js';
 
 export default class Magic extends React.Component {
   constructor(props) {
@@ -9,9 +9,11 @@ export default class Magic extends React.Component {
 
   _onPressButton() {
     this.props.navigator.push({
-      title: '❤️独°宣言❤️',
-      component: Message,
+      title: '独',
+      component: MessageView,
       navigationBarHidden: false,
+      barTintColor: '#FFFFFF',
+      tintColor: '#27423D',
       leftButtonTitle: '取消',
       passProps: {
         ref: (component) => {
@@ -31,19 +33,26 @@ export default class Magic extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity style={styles.magic} onPress={this._onPressButton.bind(this)} >
-        <Text>
-          ❤️独°宣言❤️
-        </Text>
+      <TouchableOpacity style={styles.container} onPress={this._onPressButton.bind(this)} >
+        <Image
+          style={styles.magicImage}
+          source={{uri: ''}} />
       </TouchableOpacity>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  magic: {
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#245232'
-  }
+  container: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    borderRadius: 30,
+    backgroundColor: '#27423D',
+  },
+  magicImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
 });

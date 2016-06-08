@@ -38,7 +38,7 @@ export default class Message extends React.Component {
       maxHeight: 100, // photos only
       aspectX: 2, // android only - aspectX:aspectY, the cropping image's ratio of width to height
       aspectY: 1, // android only - aspectX:aspectY, the cropping image's ratio of width to height
-      quality: 0.5, // 0 to 1, photos only
+      quality: 1, // 0 to 1, photos only
       angle: 0, // android only, photos only
       allowsEditing: false, // Built in functionality to resize/reposition the image after selection
       noData: false, // photos only - disables the base64 `data` field from being generated (greatly improves performance on large photos)
@@ -82,7 +82,7 @@ export default class Message extends React.Component {
   render() {
     return (
       <View style={styles.container} >
-        <TextInput multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
+        <TextInput autoCorrect={false} autoCapitalize='none' multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
         <View style={styles.imageTool}>
         {this.state.avatarSources.map((item) => {
           return (
@@ -92,7 +92,7 @@ export default class Message extends React.Component {
           )
         })}
         <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} >
-          <Text>
+          <Text style={styles.addText} >
             +
           </Text>
         </TouchableOpacity>
@@ -104,18 +104,19 @@ export default class Message extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 45
+    marginTop: 45,
   },
   messageInput: {
+    padding: 5,
     height: 80,
-    borderColor: 'gray',
+    borderColor: '#27423D',
     borderWidth: 1,
     margin: 5,
-    fontSize: 18
+    fontSize: 18,
   },
   imageTool: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   imageSelect: {
     width: 40,
@@ -123,11 +124,14 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFBBAA'
+    backgroundColor: '#27423D',
   },
   avatar: {
     marginLeft: 5,
     width: 40,
-    height: 40
+    height: 40,
+  },
+  addText: {
+    color: '#FFFFFF',
   }
 })

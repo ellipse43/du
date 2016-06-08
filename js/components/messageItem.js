@@ -15,7 +15,7 @@ export default class MessageItem extends React.Component {
     this.state = {
       content: this.props.rowData.get('content'),
       created: this.props.rowData.get('created'),
-      imgs: imgs
+      imgs: imgs,
     };
   }
 
@@ -28,30 +28,29 @@ export default class MessageItem extends React.Component {
     this.setState({
       content: nextProps.rowData.get('content'),
       created: nextProps.rowData.get('created'),
-      imgs: imgs
+      imgs: imgs,
     });
   }
 
   render() {
     return (
-      <View>
-        <View style={styles.row}>
-          <Text style={styles.message} allowFontScaling={true}>
-            {this.state.content}
-          </Text>
-          <View style={styles.imgs}>
-            {this.state.imgs.map((item) => {
-              return (
-                <Image
-                  style={styles.imgItem}
-                  source={{uri: `${QINIU_IMG_URI}/${item}`}} />
-              )
-            })}
-          </View>
-          <Text>
-            {socialFormatTime(this.state.created)}
-          </Text>
+      <View style={styles.row} key={this.props.rowData.get('ObjectId')} >
+        <Text style={styles.message} allowFontScaling={true}>
+          {this.state.content}
+        </Text>
+        <View style={styles.imgs}>
+          {this.state.imgs.map((item, index) => {
+            return (
+              <Image
+                key={index}
+                style={styles.imgItem}
+                source={{uri: `${QINIU_IMG_URI}/${item}`}} />
+            )
+          })}
         </View>
+        <Text style={styles.createdText} >
+          {socialFormatTime(this.state.created)}
+        </Text>
       </View>
     )
   }
@@ -59,21 +58,27 @@ export default class MessageItem extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
-    padding: 10,
-    backgroundColor: '#F6F6F6'
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: '#FFFFFF',
   },
   message: {
-    fontSize: 20,
+    fontSize: 15,
     lineHeight: 25,
-    marginLeft: 5
   },
   imgs: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   imgItem: {
-    width: 40,
-    height: 40,
-    marginLeft: 5
+    width: 100,
+    height: 100,
+    marginTop: 5,
+    marginRight: 5
+  },
+  createdText: {
+    fontSize: 10,
+    marginTop: 5,
   }
 });

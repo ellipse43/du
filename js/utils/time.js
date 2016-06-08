@@ -15,7 +15,7 @@ export function socialFormatTime(dateStr) {
 
     if (microSeconds >= _day) {
         const t = new Date(dateStr);
-        return t.getMonth() + '月' + t.getDay() + '日';
+        return t.getMonth() + '月' + t.getDate() + '日';
     } else if (microSeconds >= _hour) {
         return `${Math.floor(microSeconds / _hour)}小时前`;
     } else if (microSeconds >= _minute) {

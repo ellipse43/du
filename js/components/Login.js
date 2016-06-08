@@ -1,19 +1,47 @@
 'use strict';
 
 import React, { Component } from 'react';
-
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
   TouchableHighlight,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native';
+import AV from 'avoscloud-sdk';
+
+import MessageList from './MessageList.js';
+import RegisterView from './Register.js';
+
 
 class Login extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      username: '',
+      password: '',
+    }
+  }
+
   _onLoginPress() {
+    console.log(this.state.username);
+    AV.User.logIn(this.state.username, this.state.password).then((loginUser) => {
+      if (loginUser) {
+        //
+        this.props.navigator.replace({
+          component: MessageList
+        });
+      }
+    }, (error) => {
+      console.log(error);
+      if (error.code == 211) {
+        Alert.alert('警告', '无法找到用户');
+      }
+    });
 
   }
 
@@ -22,15 +50,17 @@ class Login extends Component {
   }
 
   _onRegisterPress() {
-
+    this.props.navigator.replace({
+      component: RegisterView
+    });
   }
 
   render() {
 
     return (
       <View style={styles.container}>
-        <TextInput placeholder='用户名' style={styles.input} />
-        <TextInput placeholder='密码' password={true} style={styles.input} />
+        <TextInput placeholder='用户名' autoCorrect={false} autoCapitalize='none' style={styles.input} onChangeText={(username) => this.setState({username})} />
+        <TextInput placeholder='密码' password={true} style={styles.input} onChangeText={(password) => this.setState({password})} />
         <TouchableHighlight
            onPress={this._onLoginPress.bind(this)}
            style={styles.loginBtn} >

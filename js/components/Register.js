@@ -7,21 +7,61 @@ import {
   View,
   TextInput,
   Text,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from 'react-native';
+
+import AV from 'avoscloud-sdk';
+import HomeView from './Home.js';
 
 class Register extends Component {
 
-  _onRegisterPress() {
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      username: '',
+      password: '',
+      repassword: '',
+      email: '',
+    };
+  }
+
+  _onRegisterPress() {
+    console.log(this.state.username, this.state.password);
+
+    if (this.state.username.length < 5) {
+      Alert.alert('警告', '用户名长度不够');
+      return;
+    }
+    if (this.state.password != this.state.repassword) {
+      Alert.alert('警告', '两次密码不匹配');
+      return;
+    }
+
+    let user = new AV.User();
+    user.setUsername(this.state.username);
+    user.setPassword(this.state.password);
+    user.setEmail(this.state.email);
+    user.signUp().then((newUser) => {
+      console.log(newUser);
+      if (newUser) {
+        this.props.navigator.replace({
+          component: HomeView,
+        })
+      }
+    }, (error) => {
+      console.log(error);
+    });
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <TextInput placeholder='用户名' style={styles.input} />
-        <TextInput placeholder='设置密码' password={true} style={styles.input} />
-        <TextInput placeholder='确认密码' password={true} style={styles.input} />
+        <TextInput placeholder='邮箱' keyboardType='email-address' autoCorrect={false} autoCapitalize='none' style={styles.input} onChangeText={(email) => this.setState({email})} />
+        <TextInput placeholder='用户名' autoCorrect={false} autoCapitalize='none' style={styles.input} onChangeText={(username) => this.setState({username})} />
+        <TextInput placeholder='设置密码' password={true} style={styles.input} onChangeText={(password) => this.setState({password})} />
+        <TextInput placeholder='确认密码' password={true} style={styles.input} onChangeText={(repassword) => this.setState({repassword})} />
         <TouchableHighlight
           onPress={this._onRegisterPress.bind(this)}
           style={styles.registerBtn} >
