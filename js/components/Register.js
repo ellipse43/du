@@ -8,7 +8,8 @@ import {
   TextInput,
   Text,
   TouchableHighlight,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 
 import AV from 'avoscloud-sdk';
@@ -58,6 +59,7 @@ class Register extends Component {
   render() {
     return (
       <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
         <TextInput placeholder='邮箱' keyboardType='email-address' autoCorrect={false} autoCapitalize='none' style={styles.input} onChangeText={(email) => this.setState({email})} />
         <TextInput placeholder='用户名' autoCorrect={false} autoCapitalize='none' style={styles.input} onChangeText={(username) => this.setState({username})} />
         <TextInput placeholder='设置密码' password={true} style={styles.input} onChangeText={(password) => this.setState({password})} />
@@ -69,6 +71,7 @@ class Register extends Component {
             提交
           </Text>
         </TouchableHighlight>
+      </ScrollView>
       </View>
     );
   }
@@ -77,8 +80,9 @@ class Register extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  scrollView: {
+    height: 300,
   },
   input: {
     height: 40,

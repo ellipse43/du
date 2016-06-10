@@ -8,7 +8,8 @@ import {
   TextInput,
   TouchableHighlight,
   Dimensions,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 import AV from 'avoscloud-sdk';
 
@@ -63,9 +64,9 @@ class Login extends Component {
   }
 
   render() {
-
     return (
       <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
         <TextInput placeholder='用户名' autoCorrect={false} autoCapitalize='none' style={styles.input} onChangeText={(username) => this.setState({username})} />
         <TextInput placeholder='密码' password={true} style={styles.input} onChangeText={(password) => this.setState({password})} />
         <TouchableHighlight
@@ -91,6 +92,7 @@ class Login extends Component {
              </Text>
           </TouchableHighlight>
         </View>
+      </ScrollView>
       </View>
     );
   }
@@ -100,8 +102,9 @@ const width = Dimensions.get('window').width - 50;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  scollView: {
+    height: 300,
   },
   input: {
     height: 40,

@@ -50,11 +50,6 @@ export default class Home extends React.Component {
         this.props.navigator.pop();
       },
     });
-
-    // this.props.navigator.push({
-    //   name: '设置',
-    //   code: 'setting',
-    // })
   }
 
   render() {
