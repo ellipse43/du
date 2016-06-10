@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Navigator,
   NavigatorIOS
 } from 'react-native';
 
@@ -11,6 +12,7 @@ import AV from 'avoscloud-sdk';
 import qiniu from 'react-native-qiniu';
 import HomeView from './components/Home.js';
 import LoginView from './components/Login.js';
+import SettingView from './components/Setting.js';
 import {envs} from './env.js';
 
 const envMap = envs[process.env.NODE_ENV];
@@ -23,43 +25,93 @@ class du extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
-      username: '',
+      component: <HomeView />,
     }
   }
 
   componentWillMount() {
     AV.User.currentAsync().then((currentUser) => {
       if (!currentUser) {
-        this.setState({
-          username: currentUser.get('username'),
-        });
-
-        this.refs.nav.replace({
+        this.refs.nav.push({
           title: '登录',
           navigationBarHidden: false,
-          component: LoginView
-        })
+          component: LoginView,
+          leftButtonTitle: ' ',
+          barTintColor: '#FFFFFF',
+        });
       }
     })
   }
 
+  renderScene(route, navigator) {
+    switch(route.code) {
+      case 'home':
+        return <HomeView
+                title={route.title}
+                code={route.code}
+                navigator={navigator}
+              />;
+      case 'setting':
+        return <SettingView
+                name={route.title}
+                title={route.title}
+                code={route.code}
+                navigator={navigator}
+                onBack={() => {
+                  navigator.pop();
+                }}
+              />;
+      default:
+        throw new Error('render error');
+    }
+  }
+
   render() {
+    // const routeMapper = {
+    //   LeftButton: function (route, navigator, index, navState) {
+    //     return null;
+    //   },
+    //   RightButton: function (route, navigator, index, navState) {
+    //     return null;
+    //   },
+    //   Title: function(route, navigator, index, state) {
+    //     return (
+    //       <Text>
+    //         首页
+    //       </Text>
+    //     )
+    //   },
+    // };
+
+    // return (
+    //   <Navigator
+    //     initialRoute={{
+    //       title: '首页',
+    //       code: 'home',
+    //       index: 0,
+    //     }}
+    //     navigationBar={
+    //       <Navigator.NavigationBar
+    //         routeMapper={routeMapper}
+    //       />
+    //     }
+    //     renderScene={this.renderScene}
+    //     style={styles.container}
+    //   />
+    // );
+
     return (
       <NavigatorIOS
         ref='nav'
-        style={styles.container}
         initialRoute={{
-          title: '首页',
+          title: '',
           navigationBarHidden: true,
-          component: HomeView,
-          passProps: {
-            username: this.state.username
-          }
+          component: HomeView
         }}
+        style={styles.container}
       />
-    );
+    )
   }
 }
 
@@ -67,8 +119,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    marginTop: 20
-  }
+    marginTop: 20,
+  },
 });
 
 AppRegistry.registerComponent('du', () => du);

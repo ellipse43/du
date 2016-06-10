@@ -1,11 +1,11 @@
 'use strict';
 
 import React from 'react';
-import { View, StyleSheet, Text, ListView, RecyclerViewBackedScrollView, RefreshControl} from 'react-native';
+import {View, StyleSheet, Text, ListView, RecyclerViewBackedScrollView, RefreshControl} from 'react-native';
 
 import AV from 'avoscloud-sdk';
 import MessageItemView from './MessageItem.js';
-import { MessageModel, messageQuery} from './model.js';
+import {MessageModel, messageQuery} from './model.js';
 
 export default class MessageList extends React.Component {
   constructor(props) {
@@ -20,12 +20,13 @@ export default class MessageList extends React.Component {
       items: items,
       dataSource: ds.cloneWithRows(items),
     };
+    this.query = new AV.Query('Message');
   }
 
   componentWillMount() {
-    messageQuery.limit(5);
-    messageQuery.addDescending('createdAt');
-    messageQuery.find().then((items) => {
+    this.query.limit(5);
+    this.query.addDescending('createdAt');
+    this.query.find().then((items) => {
       this.setState({items: items, dataSource: this.state.dataSource.cloneWithRows(items)});
     }, (error) => {
       console.log(`Error: ${error.code} ${error.message}`);
@@ -71,11 +72,11 @@ export default class MessageList extends React.Component {
 
     const item = this.state.items[this.state.items.length - 1];
     if (item) {
-      messageQuery.lessThan('objectId', item.get('objectId'));
+      this.query.lessThan('objectId', item.get('objectId'));
     }
-    messageQuery.limit(5);
-    messageQuery.addDescending('createdAt');
-    messageQuery.find().then((rs) => {
+    this.query.limit(5);
+    this.query.addDescending('createdAt');
+    this.query.find().then((rs) => {
       if (rs.length < 5) {
         this.setState({isEndReached: true});
       }

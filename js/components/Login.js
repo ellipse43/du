@@ -13,6 +13,7 @@ import {
 import AV from 'avoscloud-sdk';
 
 import MessageList from './MessageList.js';
+import HomeView from './Home.js';
 import RegisterView from './Register.js';
 
 
@@ -31,9 +32,13 @@ class Login extends Component {
     console.log(this.state.username);
     AV.User.logIn(this.state.username, this.state.password).then((loginUser) => {
       if (loginUser) {
-        //
-        this.props.navigator.replace({
-          component: MessageList
+        this.props.navigator.push({
+          title: '',
+          barTintColor: '#FFFFFF',
+          navigationBarHidden: true,
+          component: HomeView,
+          leftButtonTitle: ' ',
+          rightButtonTitle: ' ',
         });
       }
     }, (error) => {
@@ -50,8 +55,10 @@ class Login extends Component {
   }
 
   _onRegisterPress() {
-    this.props.navigator.replace({
-      component: RegisterView
+    this.props.navigator.push({
+      title: '注册',
+      component: RegisterView,
+      barTintColor: '#FFFFFF',
     });
   }
 

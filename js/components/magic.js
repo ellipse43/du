@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Text, View, Image} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import MessageView from './Message.js';
 
 export default class Magic extends React.Component {
@@ -33,26 +34,21 @@ export default class Magic extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity style={styles.container} onPress={this._onPressButton.bind(this)} >
-        <Image
-          style={styles.magicImage}
-          source={{uri: ''}} />
-      </TouchableOpacity>
+      <Icon
+        name='ios-add-circle'
+        backgroundColor='#FFBBAA'
+        onPress={this._onPressButton.bind(this)} style={styles.magic}
+      >
+      </Icon>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  magic: {
     position: 'absolute',
     bottom: 10,
     right: 10,
-    borderRadius: 30,
-    backgroundColor: '#27423D',
-  },
-  magicImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    fontSize: 56,
   },
 });

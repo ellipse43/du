@@ -3,6 +3,8 @@
 import React from 'react';
 import {NavigatorIOS, View, StyleSheet, Text, Image, TouchableHighlight, StatusBar} from 'react-native';
 import SideMenu from 'react-native-side-menu';
+import AV from 'avoscloud-sdk';
+
 import MessageList from './MessageList.js';
 import MagicView from './Magic.js';
 import SettingView from './Setting.js';
@@ -18,6 +20,12 @@ export default class Home extends React.Component {
     };
   }
 
+  componentWillMount() {
+    AV.User.currentAsync().then((currentUser) => {
+      this.setState({username: currentUser.get('username')});
+    });
+  }
+
   messageCreate(content, imgs) {
     this.setState({
       newMessage: {
@@ -27,9 +35,7 @@ export default class Home extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      username: nextProps.username,
-    })
+
   }
 
   _onAvatarPress() {
@@ -37,7 +43,18 @@ export default class Home extends React.Component {
       title: '设置',
       component: SettingView,
       navigationBarHidden: false,
+      barTintColor: '#FFFFFF',
+      leftButtonTitle: ' ',
+      rightButtonTitle: '完成',
+      onRightButtonPress: () => {
+        this.props.navigator.pop();
+      },
     });
+
+    // this.props.navigator.push({
+    //   name: '设置',
+    //   code: 'setting',
+    // })
   }
 
   render() {
@@ -49,7 +66,7 @@ export default class Home extends React.Component {
     return (
       <View style={styles.container}>
         <StatusBar
-          backgroundColor='#27423D'
+          backgroundColor='#B8B8B8'
         />
         <View style={styles.header}>
           <TouchableHighlight
@@ -61,7 +78,7 @@ export default class Home extends React.Component {
           </TouchableHighlight>
 
           <Text style={styles.usernameText}>
-            ellipse42
+            {this.state.username}
           </Text>
         </View>
         {messageList}
@@ -78,10 +95,12 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 70,
-    backgroundColor: '#27423D',
+    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    borderBottomWidth: 3,
+    borderColor: '#000000'
   },
   avatar: {
     height: 50,
@@ -97,6 +116,6 @@ const styles = StyleSheet.create({
   usernameText: {
     marginLeft: 5,
     fontSize: 14,
-    color: '#FFFFFF',
+    color: '#27423D',
   }
 });

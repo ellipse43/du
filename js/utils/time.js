@@ -1,10 +1,12 @@
 
 export function socialFormatTime(dateStr) {
-    const prev = new Date(dateStr);
+    const prev = new Date(dateStr.toString());
     const now = new Date();
     const microSeconds = now - prev;
 
-    const _second = 1 * 1000
+    console.log(microSeconds);
+
+    const _second = 1 * 1000;
     const _minute = _second * 60;
     const _hour = _minute * 60;
     const _day = _hour * 24;

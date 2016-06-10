@@ -1,3 +1,5 @@
+'use strict';
+
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
 import {socialFormatTime} from '../utils/time';
@@ -14,7 +16,7 @@ export default class MessageItem extends React.Component {
 
     this.state = {
       content: this.props.rowData.get('content'),
-      created: this.props.rowData.get('created'),
+      created: this.props.rowData.get('createdAt'),
       imgs: imgs,
     };
   }
