@@ -16,9 +16,10 @@ export default class MessageItem extends React.Component {
 
     this.state = {
       content: this.props.rowData.get('content'),
-      created: this.props.rowData.get('createdAt'),
+      createdStr: socialFormatTime(this.props.rowData.get('createdAt')),
       imgs: imgs,
     };
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -29,7 +30,7 @@ export default class MessageItem extends React.Component {
 
     this.setState({
       content: nextProps.rowData.get('content'),
-      created: nextProps.rowData.get('created'),
+      createdStr: socialFormatTime(nextProps.rowData.get('createdAt')),
       imgs: imgs,
     });
   }
@@ -50,8 +51,8 @@ export default class MessageItem extends React.Component {
             )
           })}
         </View>
-        <Text style={styles.createdText} >
-          {socialFormatTime(this.state.created)}
+        <Text style={styles.createdText}>
+          {this.state.createdStr}
         </Text>
       </View>
     )

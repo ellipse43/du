@@ -4,8 +4,6 @@ export function socialFormatTime(dateStr) {
     const now = new Date();
     const microSeconds = now - prev;
 
-    console.log(microSeconds);
-
     const _second = 1 * 1000;
     const _minute = _second * 60;
     const _hour = _minute * 60;

@@ -60,9 +60,6 @@ export default class Home extends React.Component {
 
     return (
       <View style={styles.container}>
-        <StatusBar
-          backgroundColor='#B8B8B8'
-        />
         <View style={styles.header}>
           <TouchableHighlight
             onPress={this._onAvatarPress.bind(this)}

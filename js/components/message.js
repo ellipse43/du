@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput, Image, StyleSheet, Alert, TouchableOpacity, NativeModules} from 'react-native';
+import {View, Text, TextInput, Image, StyleSheet, Alert, TouchableOpacity, NativeModules, ScrollView} from 'react-native';
 import qiniu from 'react-native-qiniu';
 import {putPolicy} from '../utils/qiniu';
 
@@ -81,7 +81,8 @@ export default class Message extends React.Component {
 
   render() {
     return (
-      <View style={styles.container} >
+      <View style={styles.container}>
+      <ScrollView style={styles.scrollView} >
         <TextInput autoCorrect={false} autoCapitalize='none' multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
         <View style={styles.imageTool}>
         {this.state.avatarSources.map((item) => {
@@ -97,6 +98,7 @@ export default class Message extends React.Component {
           </Text>
         </TouchableOpacity>
         </View>
+      </ScrollView>
       </View>
     )
   }
@@ -104,7 +106,10 @@ export default class Message extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 45,
+    flex: 1,
+  },
+  scollView: {
+    height: 300,
   },
   messageInput: {
     padding: 5,

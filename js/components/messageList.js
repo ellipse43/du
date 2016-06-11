@@ -43,7 +43,7 @@ export default class MessageList extends React.Component {
         const msg = MessageModel.new(nextProps.newMessage);
         msg.set('ACL', new AV.ACL(currentUser));
         msg.save().then((msg) => {
-          console.log('Create');
+
         }, (error) => {
           console.log(`Error: ${error.code} ${error.message}`);
         });
