@@ -1,6 +1,5 @@
 
-export function socialFormatTime(dateStr) {
-    const prev = new Date(dateStr.toString());
+export function socialFormatTime(prev) {
     const now = new Date();
     const microSeconds = now - prev;
 
@@ -14,8 +13,7 @@ export function socialFormatTime(dateStr) {
     }
 
     if (microSeconds >= _day) {
-        const t = new Date(dateStr);
-        return t.getMonth() + '月' + t.getDate() + '日';
+        return prev.getMonth() + '月' + prev.getDate() + '日';
     } else if (microSeconds >= _hour) {
         return `${Math.floor(microSeconds / _hour)}小时前`;
     } else if (microSeconds >= _minute) {

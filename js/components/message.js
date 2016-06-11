@@ -85,9 +85,10 @@ export default class Message extends React.Component {
       <ScrollView style={styles.scrollView} >
         <TextInput autoCorrect={false} autoCapitalize='none' multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
         <View style={styles.imageTool}>
-        {this.state.avatarSources.map((item) => {
+        {this.state.avatarSources.map((item, index) => {
           return (
             <Image
+              key={index}
               style={styles.avatar}
               source={{uri: item.uri}} />
           )
