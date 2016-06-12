@@ -15,14 +15,14 @@ export default class Home extends React.Component {
     super(props);
 
     this.state = {
-      username: '',
+      nickname: '',
       newMessage: null,
     };
   }
 
   componentWillMount() {
     AV.User.currentAsync().then((currentUser) => {
-      this.setState({username: currentUser.get('username')});
+      this.setState({nickname: currentUser.get('nickname')});
     });
   }
 
@@ -69,8 +69,8 @@ export default class Home extends React.Component {
               source={{uri: 'http://o8a6ibmov.bkt.clouddn.com/2016/6/5/23/1465139931467.jpeg'}} />
           </TouchableHighlight>
 
-          <Text style={styles.usernameText}>
-            {this.state.username}
+          <Text style={styles.nicknameText}>
+            {this.state.nickname}
           </Text>
         </View>
         {messageList}
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 25,
   },
-  usernameText: {
+  nicknameText: {
     marginLeft: 5,
     fontSize: 14,
     color: '#27423D',

@@ -42,6 +42,7 @@ class Register extends Component {
 
     let user = new AV.User();
     user.setUsername(this.state.username);
+    user.setNickname(this.state.username);
     user.setPassword(this.state.password);
     user.setEmail(this.state.email);
     user.signUp().then((newUser) => {
