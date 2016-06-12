@@ -7,15 +7,38 @@ import {
   View,
   Text,
   ScrollView,
-  Dimensions
+  Dimensions,
+  TouchableHighlight,
+  Image
 } from 'react-native';
 
 import AV from 'avoscloud-sdk';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginView from './Login.js';
-
+import NicknameView from './Nickname.js';
 
 class Setting extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      avatar: '',
+      nickname: '',
+      currentUser: null,
+    };
+  }
+
+  componentWillMount() {
+    AV.User.currentAsync().then((currentUser) => {
+      console.log('id', currentUser.get('objectId'), currentUser.get('nickname'));
+      this.setState({
+        avatar: currentUser.get('avatar'),
+        nickname: currentUser.get('nickname'),
+        currentUser: currentUser,
+      });
+    });
+  }
 
   onExitPress() {
     AV.User.logOut();
@@ -29,57 +52,95 @@ class Setting extends Component {
     })
   }
 
+  onAvatarPress() {
+
+  }
+
+  onNicknameUpdate(nickname) {
+    this.setState({nickname});
+    let user = this.state.currentUser;
+    if (user) {
+      user.set('nickname', nickname);
+      user.save().then(() => {
+        console.log('Save Nickname Success');
+      }, (error) => {
+        console.log(`Save Nickname Fail: ${error}`);
+      });
+    }
+  }
+
+  onNicknamePress() {
+    this.props.navigator.push({
+      title: '昵称',
+      barTintColor: '#FFFFFF',
+      navigationBarHidden: false,
+      component: NicknameView,
+      passProps: {
+        ref: (component) => {
+          this.pushComponent = component;
+        },
+        nickname: this.state.nickname,
+        onNicknameUpdate: this.onNicknameUpdate.bind(this),
+      },
+      leftButtonTitle: '取消',
+      onLeftButtonPress: () => {
+        this.props.navigator.pop();
+      },
+      rightButtonTitle: '保存',
+      onRightButtonPress: () => {
+        this.pushComponent && this.pushComponent.onSavePress();
+      },
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <ScrollView
           style={styles.scrollView}
         >
-
-        <View style={styles.item}>
-          <Icon.Button
-            name='ios-log-out'
-            color='#000000'
-            backgroundColor='#FFFFFF'
-            iconStyle={styles.icon}
-            borderRadius={0}
-            onPress={this.onExitPress.bind(this)}
-          >
-            <Text style={styles.text}>
-              头像
-            </Text>
-          </Icon.Button>
+        <View style={styles.profile}>
+          <TouchableHighlight
+            onPress={this.onAvatarPress.bind(this)}
+            style={styles.avatar}>
+            <View style={styles.avatarContainer}>
+              <Text style={styles.itemText}>
+                头像
+              </Text>
+              <View style={styles.avatarRight}>
+                <Image
+                  style={styles.avatarImage}
+                  source={{uri: this.state.avatar}} />
+                <Icon name='ios-arrow-forward' size={18} color={'#CCCCCC'}>
+                </Icon>
+              </View>
+            </View>
+          </TouchableHighlight>
+          <View style={styles.separtor}></View>
+          <TouchableHighlight
+            onPress={this.onNicknamePress.bind(this)}
+            style={styles.nickname}>
+            <View style={styles.nicknameContainer}>
+              <Text style={styles.itemText}>
+                昵称
+              </Text>
+              <View style={styles.nicknameRight}>
+                <Text style={styles.nicknameLabel}>
+                  {this.state.nickname}
+                </Text>
+                <Icon name='ios-arrow-forward' size={18} color={'#CCCCCC'}>
+                </Icon>
+              </View>
+            </View>
+          </TouchableHighlight>
         </View>
-
-        <View style={styles.item}>
-          <Icon.Button
-            name='ios-log-out'
-            color='#000000'
-            backgroundColor='#FFFFFF'
-            iconStyle={styles.icon}
-            borderRadius={0}
-            onPress={this.onExitPress.bind(this)}
-          >
-            <Text style={styles.text}>
-              昵称
-            </Text>
-          </Icon.Button>
-        </View>
-
-        <View style={styles.item}>
-          <Icon.Button
-            name='ios-log-out'
-            color='#000000'
-            backgroundColor='#FFFFFF'
-            iconStyle={styles.icon}
-            borderRadius={0}
-            onPress={this.onExitPress.bind(this)}
-          >
-            <Text style={styles.text}>
-              退出登陆
-            </Text>
-          </Icon.Button>
-        </View>
+        <TouchableHighlight
+          onPress={this.onExitPress.bind(this)}
+          style={styles.exit}>
+          <Text style={styles.exitText}>
+            退出登陆
+          </Text>
+        </TouchableHighlight>
         </ScrollView>
       </View>
     )
@@ -97,30 +158,82 @@ const styles = StyleSheet.create({
   scrollView: {
     height: 300,
   },
+  separtor: {
+    marginLeft: 10,
+    borderColor: '#EDEDED',
+    borderBottomWidth: 1,
+  },
+  profile: {
+    marginTop: 10,
+    backgroundColor: '#FFFFFF',
+  },
+  avatar: {
+    height: 70,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    width: Dimensions.get('window').width,
+  },
+  avatarContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  avatarRight: {
+    flexDirection: 'row',
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  avatarImage: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  nickname: {
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    width: Dimensions.get('window').width,
+  },
+  nicknameContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  nicknameRight: {
+    flexDirection: 'row',
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  nicknameLabel: {
+    fontSize: 16,
+    color: '#BDBDBD',
+    marginRight: 10,
+  },
   item: {
     marginTop: 10,
-    width: Dimensions.get('window').width
-  },
-  icon: {
-  },
-  text: {
-    fontSize: 16,
-    color: '#000000',
-  },
-  exitBtn: {
     height: 40,
-    alignSelf: 'stretch',
-    backgroundColor: '#27423D',
-    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
-    marginLeft: 5,
-    marginRight: 5,
-    borderRadius: 5,
+    width: Dimensions.get('window').width,
+  },
+  itemText: {
+    marginLeft: 10,
+    fontSize: 16,
+  },
+  exit: {
+    marginTop: 10,
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: Dimensions.get('window').width,
   },
   exitText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-  }
+    fontSize: 16,
+  },
 });
 
 
