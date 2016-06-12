@@ -1,6 +1,9 @@
+'use strict';
+
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Text, View, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+
 import MessageView from './Message.js';
 
 export default class Magic extends React.Component {
@@ -14,7 +17,7 @@ export default class Magic extends React.Component {
       component: MessageView,
       navigationBarHidden: false,
       barTintColor: '#FFFFFF',
-      tintColor: '#27423D',
+      tintColor: '#000000',
       leftButtonTitle: '取消',
       passProps: {
         ref: (component) => {

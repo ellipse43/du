@@ -1,6 +1,10 @@
+'use strict';
+
 import React from 'react';
 import {View, Text, TextInput, Image, StyleSheet, Alert, TouchableOpacity, NativeModules, ScrollView} from 'react-native';
 import qiniu from 'react-native-qiniu';
+import Icon from 'react-native-vector-icons/Ionicons';
+import LocationView from './Location.js';
 import {putPolicy} from '../utils/qiniu';
 
 export default class Message extends React.Component {
@@ -79,11 +83,28 @@ export default class Message extends React.Component {
     });
   }
 
+  onLocationPress() {
+    this.props.navigator.push({
+      title: '所在位置',
+      component: LocationView,
+      barTintColor: '#FFFFFF',
+      navigationBarHidden: false,
+      leftButtonTitle: '取消',
+      onLeftButtonPress: () => {
+        this.props.navigator.pop();
+      },
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
       <ScrollView style={styles.scrollView} >
-        <TextInput autoCorrect={false} autoCapitalize='none' multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
+        <View style={styles.core}>
+          <TextInput autoCorrect={false} autoCapitalize='none' multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
+          <View style={styles.separtor}></View>
+          <TouchableOpacity onPress={this.onLocationPress.bind(this)}><View style={styles.setting}><Icon name='ios-locate' style={styles.settingIcon}></Icon><Text style={styles.settingIconText}>所在位置</Text></View></TouchableOpacity>
+        </View>
         <View style={styles.imageTool}>
         {this.state.avatarSources.map((item, index) => {
           return (
@@ -112,15 +133,39 @@ const styles = StyleSheet.create({
   scollView: {
     height: 300,
   },
+  core: {
+    borderColor: '#000000',
+    borderBottomWidth: 1,
+  },
+  separtor: {
+    marginLeft: 20,
+    borderColor: '#000000',
+    borderBottomWidth: 1,
+  },
+  setting: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  settingIcon: {
+    marginLeft: 10,
+    fontSize: 30,
+    padding: 5,
+  },
+  settingIconText: {
+    marginLeft: 10,
+    fontSize: 16,
+  },
   messageInput: {
     padding: 5,
     height: 80,
-    borderColor: '#27423D',
-    borderWidth: 1,
+    // borderColor: '#27423D',
+    // borderWidth: 1,
     margin: 5,
     fontSize: 18,
   },
   imageTool: {
+    marginTop: 5,
     flex: 1,
     flexDirection: 'row',
   },
