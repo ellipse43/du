@@ -23,21 +23,8 @@ class Setting extends Component {
     super(props);
 
     this.state = {
-      avatar: '',
-      nickname: '',
-      currentUser: null,
+      currentUser: this.props.currentUser,
     };
-  }
-
-  componentWillMount() {
-    AV.User.currentAsync().then((currentUser) => {
-      console.log('id', currentUser.get('objectId'), currentUser.get('nickname'));
-      this.setState({
-        avatar: currentUser.get('avatar'),
-        nickname: currentUser.get('nickname'),
-        currentUser: currentUser,
-      });
-    });
   }
 
   onExitPress() {
@@ -57,7 +44,6 @@ class Setting extends Component {
   }
 
   onNicknameUpdate(nickname) {
-    this.setState({nickname});
     let user = this.state.currentUser;
     if (user) {
       user.set('nickname', nickname);
@@ -67,6 +53,7 @@ class Setting extends Component {
         console.log(`Save Nickname Fail: ${error}`);
       });
     }
+    this.setState({currentUser: user});
   }
 
   onNicknamePress() {
@@ -79,7 +66,7 @@ class Setting extends Component {
         ref: (component) => {
           this.pushComponent = component;
         },
-        nickname: this.state.nickname,
+        nickname: this.state.currentUser.get('nickname'),
         onNicknameUpdate: this.onNicknameUpdate.bind(this),
       },
       leftButtonTitle: '取消',
@@ -94,6 +81,9 @@ class Setting extends Component {
   }
 
   render() {
+    const nickname = this.state.currentUser.get('nickname');
+    const avatar = this.state.currentUser.get('avatar');
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -110,7 +100,7 @@ class Setting extends Component {
               <View style={styles.avatarRight}>
                 <Image
                   style={styles.avatarImage}
-                  source={{uri: this.state.avatar}} />
+                  source={{uri: avatar}} />
                 <Icon name='ios-arrow-forward' size={18} color={'#CCCCCC'}>
                 </Icon>
               </View>
@@ -126,7 +116,7 @@ class Setting extends Component {
               </Text>
               <View style={styles.nicknameRight}>
                 <Text style={styles.nicknameLabel}>
-                  {this.state.nickname}
+                  {nickname}
                 </Text>
                 <Icon name='ios-arrow-forward' size={18} color={'#CCCCCC'}>
                 </Icon>

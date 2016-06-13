@@ -15,14 +15,14 @@ export default class Home extends React.Component {
     super(props);
 
     this.state = {
-      nickname: '',
       newMessage: null,
+      currentUser: null,
     };
   }
 
   componentWillMount() {
     AV.User.currentAsync().then((currentUser) => {
-      this.setState({nickname: currentUser.get('nickname')});
+      this.setState({currentUser});
     });
   }
 
@@ -45,6 +45,9 @@ export default class Home extends React.Component {
       navigationBarHidden: false,
       barTintColor: '#FFFFFF',
       leftButtonTitle: ' ',
+      passProps: {
+        currentUser: this.state.currentUser,
+      },
       rightButtonTitle: '完成',
       onRightButtonPress: () => {
         this.props.navigator.pop();
@@ -58,6 +61,8 @@ export default class Home extends React.Component {
       messageList = <MessageList newMessage={this.state.newMessage} />
     }
 
+    const nickname = this.state.currentUser ? this.state.currentUser.get('nickname') : '';
+
     return (
       <View style={styles.container}>
         <View style={styles.header}>
@@ -70,7 +75,7 @@ export default class Home extends React.Component {
           </TouchableHighlight>
 
           <Text style={styles.nicknameText}>
-            {this.state.nickname}
+            {nickname}
           </Text>
         </View>
         {messageList}
