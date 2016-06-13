@@ -8,6 +8,7 @@ import AV from 'avoscloud-sdk';
 import MessageList from './MessageList.js';
 import MagicView from './Magic.js';
 import SettingView from './Setting.js';
+import {QINIU_IMG_URI} from '../const';
 
 
 export default class Home extends React.Component {
@@ -61,7 +62,9 @@ export default class Home extends React.Component {
       messageList = <MessageList newMessage={this.state.newMessage} />
     }
 
-    const nickname = this.state.currentUser ? this.state.currentUser.get('nickname') : '';
+    const user = this.state.currentUser;
+    const nickname = user ? user.get('nickname') : '';
+    const avatar = user ? user.get('avatar') : '';
 
     return (
       <View style={styles.container}>
@@ -71,7 +74,7 @@ export default class Home extends React.Component {
             style={styles.avatar} >
             <Image
               style={styles.avatarImage}
-              source={{uri: 'http://o8a6ibmov.bkt.clouddn.com/2016/6/5/23/1465139931467.jpeg'}} />
+              source={{uri: `${QINIU_IMG_URI}/${avatar}`}} />
           </TouchableHighlight>
 
           <Text style={styles.nicknameText}>
