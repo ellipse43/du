@@ -1,7 +1,18 @@
 'use strict';
 
 import React from 'react';
-import {View, Text, TextInput, Image, StyleSheet, Alert, TouchableOpacity, NativeModules, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Image,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  NativeModules,
+  ScrollView
+} from 'react-native';
+
 import qiniu from 'react-native-qiniu';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LocationView from './Location.js';

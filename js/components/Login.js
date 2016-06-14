@@ -73,7 +73,7 @@ class Login extends Component {
            onPress={this._onLoginPress.bind(this)}
            style={styles.loginBtn} >
            <Text style={styles.loginText}>
-             登陆
+             登录
            </Text>
         </TouchableHighlight>
         <View style={styles.btnGroup} >
