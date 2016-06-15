@@ -205,6 +205,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 20,
   },
+  modalEntity: {
+    width: 200,
+    height: 100,
+    borderColor: '#EDEDED',
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10},
   scollView: {
     height: 300,
   },
