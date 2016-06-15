@@ -59,8 +59,14 @@ export default class Home extends React.Component {
     }
 
     const user = this.state.currentUser;
-    const nickname = user ? user.get('nickname') : '';
-    const avatar = user ? user.get('avatar') : '';
+    const nickname = user ? user.get('nickname') : ``;
+
+    let avatar = null;
+    if (user && user.get('avatar')) {
+      avatar = <Image style={styles.avatarImage} source={{uri: `${QINIU_IMG_URI}/${user.get('avatar')}`}} />
+    } else {
+      avatar = <Image style={styles.avatarImage} source={require('../../imageAssets/default-avatar.jpg')} />;
+    }
 
     return (
       <View style={styles.container}>
@@ -68,9 +74,7 @@ export default class Home extends React.Component {
           <TouchableHighlight
             onPress={this._onAvatarPress.bind(this)}
             style={styles.avatar} >
-            <Image
-              style={styles.avatarImage}
-              source={{uri: `${QINIU_IMG_URI}/${avatar}`}} />
+            {avatar}
           </TouchableHighlight>
 
           <Text style={styles.nicknameText}>
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     borderBottomWidth: 3,
-    borderColor: '#000000'
+    borderColor: '#000000',
   },
   avatar: {
     height: 50,
@@ -112,6 +116,6 @@ const styles = StyleSheet.create({
   nicknameText: {
     marginLeft: 5,
     fontSize: 14,
-    color: '#27423D',
+    color: '#000000',
   }
 });
