@@ -16,17 +16,19 @@ import {
   ActivityIndicatorIOS
 } from 'react-native';
 
+import AV from 'avoscloud-sdk';
 import qiniu from 'react-native-qiniu';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LocationView from './Location.js';
 import {putPolicy} from '../utils/qiniu';
+import {MessageModel} from './Model.js';
 
 export default class Message extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       content: '',
-      avatarSources: [],
+      imgs: [],
       animationType: 'none',
       modalVisible: false,
       transparent: true,
@@ -34,7 +36,7 @@ export default class Message extends React.Component {
   }
 
   cancel() {
-    if (this.state.content.length > 0 || this.state.avatarSources.length > 0) {
+    if (this.state.content.length > 0 || this.state.imgs.length > 0) {
 
     }
     this.props.navigator.pop();
@@ -46,13 +48,24 @@ export default class Message extends React.Component {
       return;
     }
     const imgs = [];
-    this.state.avatarSources.forEach((item) => {
+    this.state.imgs.forEach((item) => {
       if (item.key != null) {
         imgs.push(item.key);
       }
     });
-    this.props.onMessageCreate(this.state.content, imgs);
-    this.props.navigator.pop();
+
+
+    this.setModalVisible(true);
+    const msg = MessageModel.new({content: this.state.content, imgs: imgs});
+    msg.set('ACL', new AV.ACL(this.props.currentUser));
+    msg.save().then((msg) => {
+      this.props.onMessageCreate(msg);
+      this.props.navigator.pop();
+    }, (error) => {
+      console.log(`Error: ${error.code} ${error.message}`);
+    });
+    this.setModalVisible(false);
+
   }
 
   _onImageSelect() {
@@ -100,10 +113,10 @@ export default class Message extends React.Component {
         qiniu.rpc.uploadImage(response.uri, key, uptoken, function(resp) {
           this.setModalVisible(false);
 
-          let avatarSources = this.state.avatarSources.slice();
-          avatarSources.push(source);
+          let imgs = this.state.imgs.slice();
+          imgs.push(source);
           this.setState({
-            avatarSources: avatarSources
+            imgs: imgs
           });
         }.bind(this));
       }
@@ -128,6 +141,11 @@ export default class Message extends React.Component {
   }
 
   render() {
+    let imgBtn = null;
+    if (this.state.imgs.length < 4) {
+      imgBtn = <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} ><Text style={styles.addText} >+</Text></TouchableOpacity>
+    }
+
     return (
       <View style={styles.container}>
         <Modal
@@ -137,7 +155,7 @@ export default class Message extends React.Component {
           onRequestClose={() => this.setModalVisible(false)}
         >
           <View style={styles.modalContaier}>
-            <View style={{width: 200, height: 100, borderColor: '#EDEDED', borderWidth: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', borderRadius: 10}}>
+            <View style={styles.modalEntity}>
               <ActivityIndicatorIOS
                 size='large'
                 animating={true}
@@ -160,7 +178,7 @@ export default class Message extends React.Component {
             </TouchableOpacity>
           </View>
           <View style={styles.imageTool}>
-          {this.state.avatarSources.map((item, index) => {
+          {this.state.imgs.map((item, index) => {
             return (
               <Image
                 key={index}
@@ -168,11 +186,7 @@ export default class Message extends React.Component {
                 source={{uri: item.uri}} />
             )
           })}
-          <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} >
-            <Text style={styles.addText} >
-              +
-            </Text>
-          </TouchableOpacity>
+          {imgBtn}
           </View>
         </ScrollView>
       </View>

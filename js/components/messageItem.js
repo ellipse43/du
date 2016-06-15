@@ -36,13 +36,26 @@ export default class MessageItem extends React.Component {
   }
 
   render() {
+    const imgLineOne = this.state.imgs.slice(0, 2);
+    const imgLineTwo = this.state.imgs.slice(2, 4);
+
     return (
       <View style={styles.row} key={this.props.rowData.get('ObjectId')} >
         <Text style={styles.message} allowFontScaling={true}>
           {this.state.content}
         </Text>
         <View style={styles.imgs}>
-          {this.state.imgs.map((item, index) => {
+          {imgLineOne.map((item, index) => {
+            return (
+              <Image
+                key={index}
+                style={styles.imgItem}
+                source={{uri: `${QINIU_IMG_URI}/${item}`}} />
+            )
+          })}
+        </View>
+        <View style={styles.imgs}>
+          {imgLineTwo.map((item, index) => {
             return (
               <Image
                 key={index}

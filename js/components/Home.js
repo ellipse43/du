@@ -27,12 +27,8 @@ export default class Home extends React.Component {
     });
   }
 
-  messageCreate(content, imgs) {
-    this.setState({
-      newMessage: {
-        content: content,
-        imgs: imgs,
-    }});
+  onMessageCreate(newMessage) {
+    this.setState({newMessage});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -82,7 +78,7 @@ export default class Home extends React.Component {
           </Text>
         </View>
         {messageList}
-        <MagicView navigator={this.props.navigator} messageCreate={this.messageCreate.bind(this)} />
+        <MagicView navigator={this.props.navigator} onMessageCreate={this.onMessageCreate.bind(this)} />
       </View>
     )
   }

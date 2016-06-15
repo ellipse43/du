@@ -1,9 +1,15 @@
 'use strict';
 
 import React from 'react';
-import {StyleSheet, TouchableOpacity, Text, View, Image} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  Image
+} from 'react-native';
 
+import Icon from 'react-native-vector-icons/Ionicons';
 import MessageView from './Message.js';
 
 export default class Magic extends React.Component {
@@ -23,7 +29,7 @@ export default class Magic extends React.Component {
         ref: (component) => {
           this.pushComponent = component;
         },
-        onMessageCreate: this.props.messageCreate
+        onMessageCreate: this.props.onMessageCreate,
       },
       onLeftButtonPress: () => {
         this.pushComponent && this.pushComponent.cancel();
@@ -39,7 +45,6 @@ export default class Magic extends React.Component {
     return (
       <Icon
         name='ios-add-circle'
-        backgroundColor='#FFBBAA'
         onPress={this._onPressButton.bind(this)} style={styles.magic}
       >
       </Icon>

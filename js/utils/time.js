@@ -13,7 +13,7 @@ export function socialFormatTime(prev) {
     }
 
     if (microSeconds >= _day) {
-        return prev.getMonth() + '月' + prev.getDate() + '日';
+        return (prev.getMonth() + 1) + '月' + prev.getDate() + '日';
     } else if (microSeconds >= _hour) {
         return `${Math.floor(microSeconds / _hour)}小时前`;
     } else if (microSeconds >= _minute) {

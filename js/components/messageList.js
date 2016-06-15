@@ -5,7 +5,7 @@ import {View, StyleSheet, Text, ListView, RecyclerViewBackedScrollView, RefreshC
 
 import AV from 'avoscloud-sdk';
 import MessageItemView from './MessageItem.js';
-import {MessageModel, messageQuery} from './model.js';
+import {MessageModel, messageQuery} from './Model.js';
 
 export default class MessageList extends React.Component {
   constructor(props) {
@@ -38,23 +38,13 @@ export default class MessageList extends React.Component {
       return;
     }
 
-    if (nextProps.newMessage) {
-      AV.User.currentAsync().then((currentUser) => {
-        const msg = MessageModel.new(nextProps.newMessage);
-        msg.set('ACL', new AV.ACL(currentUser));
-        msg.save().then((msg) => {
+    let items = this.state.items.slice();
+    items.unshift(nextProps.newMessage);
 
-        }, (error) => {
-          console.log(`Error: ${error.code} ${error.message}`);
-        });
-        let items = this.state.items.slice();
-        items.unshift(msg);
-        this.setState({
-          items: items,
-          dataSource: this.state.dataSource.cloneWithRows(items),
-        });
-      });
-    }
+    this.setState({
+      items: items,
+      dataSource: this.state.dataSource.cloneWithRows(items),
+    });
   }
 
   _onRefresh() {
