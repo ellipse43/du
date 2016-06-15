@@ -10,7 +10,10 @@ import {
   Alert,
   TouchableOpacity,
   NativeModules,
-  ScrollView
+  ScrollView,
+  Dimensions,
+  Modal,
+  ActivityIndicatorIOS
 } from 'react-native';
 
 import qiniu from 'react-native-qiniu';
@@ -21,10 +24,23 @@ import {putPolicy} from '../utils/qiniu';
 export default class Message extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {content: '', avatarSources: []};
+    this.state = {
+      content: '',
+      avatarSources: [],
+      animationType: 'none',
+      modalVisible: false,
+      transparent: true,
+    };
   }
 
-  call() {
+  cancel() {
+    if (this.state.content.length > 0 || this.state.avatarSources.length > 0) {
+
+    }
+    this.props.navigator.pop();
+  }
+
+  save() {
     if (this.state.content.length < 1) {
       Alert.alert('警告', '输入字数太少');
       return;
@@ -64,8 +80,6 @@ export default class Message extends React.Component {
     };
 
     NativeModules.ImagePickerManager.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
-
       if (response.didCancel) {
         console.log('User cancelled image picker');
       }
@@ -76,14 +90,16 @@ export default class Message extends React.Component {
         console.log('User tapped custom button: ', response.customButton);
       }
       else {
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+        this.setModalVisible(true);
+        const dataSource = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
         const uptoken = putPolicy.token();
         const date = new Date();
         const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
         const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
 
         qiniu.rpc.uploadImage(response.uri, key, uptoken, function(resp) {
-          console.log(JSON.stringify(resp));
+          this.setModalVisible(false);
+
           let avatarSources = this.state.avatarSources.slice();
           avatarSources.push(source);
           this.setState({
@@ -107,31 +123,58 @@ export default class Message extends React.Component {
     });
   }
 
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
+
   render() {
     return (
       <View style={styles.container}>
-      <ScrollView style={styles.scrollView} >
-        <View style={styles.core}>
-          <TextInput autoCorrect={false} autoCapitalize='none' multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
-          <View style={styles.separtor}></View>
-          <TouchableOpacity onPress={this.onLocationPress.bind(this)}><View style={styles.setting}><Icon name='ios-locate' style={styles.settingIcon}></Icon><Text style={styles.settingIconText}>所在位置</Text></View></TouchableOpacity>
-        </View>
-        <View style={styles.imageTool}>
-        {this.state.avatarSources.map((item, index) => {
-          return (
-            <Image
-              key={index}
-              style={styles.avatar}
-              source={{uri: item.uri}} />
-          )
-        })}
-        <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} >
-          <Text style={styles.addText} >
-            +
-          </Text>
-        </TouchableOpacity>
-        </View>
-      </ScrollView>
+        <Modal
+          animationType={this.state.animationType}
+          transparent={this.state.transparent}
+          visible={this.state.modalVisible}
+          onRequestClose={() => this.setModalVisible(false)}
+        >
+          <View style={styles.modalContaier}>
+            <View style={{width: 200, height: 100, borderColor: '#EDEDED', borderWidth: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', borderRadius: 10}}>
+              <ActivityIndicatorIOS
+                size='large'
+                animating={true}
+              />
+            </View>
+          </View>
+        </Modal>
+        <ScrollView style={styles.scrollView} >
+          <View style={styles.core}>
+            <TextInput autoCorrect={false} autoCapitalize='none' multiline={true} style={styles.messageInput} ref="content" onChangeText={(content) => this.setState({content: content})} value={this.state.content} />
+            <View style={styles.separtor}></View>
+            <TouchableOpacity onPress={this.onLocationPress.bind(this)} style={styles.location}>
+              <View style={styles.settingContainer}>
+                <View style={styles.locationLeft}>
+                  <Icon name='ios-locate' size={18} color={'#000000'} style={styles.settingIcon}></Icon>
+                  <Text style={styles.settingIconText}>所在位置</Text>
+                </View>
+                <Icon name='ios-arrow-forward' size={18} color={'#CCCCCC'} style={{marginRight: 10}}></Icon>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.imageTool}>
+          {this.state.avatarSources.map((item, index) => {
+            return (
+              <Image
+                key={index}
+                style={styles.avatar}
+                source={{uri: item.uri}} />
+            )
+          })}
+          <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} >
+            <Text style={styles.addText} >
+              +
+            </Text>
+          </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     )
   }
@@ -141,27 +184,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  modalContaier: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 20,
+  },
   scollView: {
     height: 300,
   },
   core: {
-    borderColor: '#000000',
+    borderColor: '#EDEDED',
     borderBottomWidth: 1,
   },
   separtor: {
-    marginLeft: 20,
-    borderColor: '#000000',
+    marginLeft: 10,
+    borderColor: '#EDEDED',
     borderBottomWidth: 1,
   },
-  setting: {
+  location: {
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    width: Dimensions.get('window').width,
+  },
+  locationLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    marginLeft: 10,
+    alignItems: 'center',
+  },
+  settingContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  settingIcon: {
-    marginLeft: 10,
-    fontSize: 30,
-    padding: 5,
+    justifyContent: 'space-between',
   },
   settingIconText: {
     marginLeft: 10,
@@ -170,30 +228,30 @@ const styles = StyleSheet.create({
   messageInput: {
     padding: 5,
     height: 80,
-    // borderColor: '#27423D',
-    // borderWidth: 1,
     margin: 5,
     fontSize: 18,
   },
   imageTool: {
-    marginTop: 5,
+    marginTop: 10,
+    marginLeft: 10,
     flex: 1,
     flexDirection: 'row',
   },
   imageSelect: {
-    width: 40,
-    height: 40,
-    marginLeft: 5,
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#27423D',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#EDEDED',
+    borderWidth: 1,
   },
   avatar: {
-    marginLeft: 5,
-    width: 40,
-    height: 40,
+    marginRight: 5,
+    width: 60,
+    height: 60,
   },
   addText: {
-    color: '#FFFFFF',
+    color: '#EDEDED',
   }
 })

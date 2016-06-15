@@ -8,6 +8,7 @@ import {
   NavigatorIOS
 } from 'react-native';
 
+import _ from 'lodash';
 import AV from 'avoscloud-sdk';
 import qiniu from 'react-native-qiniu';
 import HomeView from './components/Home.js';
@@ -20,6 +21,15 @@ AV.initialize(envMap.leancloud.AV_APP_ID, envMap.leancloud.AV_SECRET);
 qiniu.conf.ACCESS_KEY = envMap.qiniu.ACCESS_KEY;
 qiniu.conf.SECRET_KEY = envMap.qiniu.SECRET_KEY;
 
+// Text.prototype.render = _.wrap(Text.prototype.render, function (func, ...args) {
+//     let originText = func.apply(this, args);
+//     return React.cloneElement(originText, {
+//         style: [
+//             originText.props.style,
+//             styles.defaultFontFamily,
+//         ]
+//     });
+// });
 
 class du extends Component {
 
@@ -68,39 +78,6 @@ class du extends Component {
   }
 
   render() {
-    // const routeMapper = {
-    //   LeftButton: function (route, navigator, index, navState) {
-    //     return null;
-    //   },
-    //   RightButton: function (route, navigator, index, navState) {
-    //     return null;
-    //   },
-    //   Title: function(route, navigator, index, state) {
-    //     return (
-    //       <Text>
-    //         首页
-    //       </Text>
-    //     )
-    //   },
-    // };
-
-    // return (
-    //   <Navigator
-    //     initialRoute={{
-    //       title: '首页',
-    //       code: 'home',
-    //       index: 0,
-    //     }}
-    //     navigationBar={
-    //       <Navigator.NavigationBar
-    //         routeMapper={routeMapper}
-    //       />
-    //     }
-    //     renderScene={this.renderScene}
-    //     style={styles.container}
-    //   />
-    // );
-
     return (
       <NavigatorIOS
         ref='nav'
@@ -121,6 +98,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     marginTop: 20,
   },
+  defaultFontFamily: {
+    fontFamily: 'Menlo-Regular',
+  }
 });
 
 AppRegistry.registerComponent('du', () => du);

@@ -13,7 +13,7 @@ export default class Magic extends React.Component {
 
   _onPressButton() {
     this.props.navigator.push({
-      title: '独',
+      title: ' ',
       component: MessageView,
       navigationBarHidden: false,
       barTintColor: '#FFFFFF',
@@ -21,16 +21,16 @@ export default class Magic extends React.Component {
       leftButtonTitle: '取消',
       passProps: {
         ref: (component) => {
-          this.pushComponent = component
+          this.pushComponent = component;
         },
         onMessageCreate: this.props.messageCreate
       },
       onLeftButtonPress: () => {
-        this.props.navigator.pop();
+        this.pushComponent && this.pushComponent.cancel();
       },
       rightButtonTitle: '发送',
       onRightButtonPress: () => {
-        this.pushComponent && this.pushComponent.call();
+        this.pushComponent && this.pushComponent.save();
       }
     })
   }

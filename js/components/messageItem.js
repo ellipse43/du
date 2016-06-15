@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 15,
     lineHeight: 25,
+    fontFamily: 'Avenir-Light',
   },
   imgs: {
     flex: 1,
@@ -83,5 +84,6 @@ const styles = StyleSheet.create({
   createdText: {
     fontSize: 10,
     marginTop: 5,
+    color: '#C7C7C7',
   }
 });
