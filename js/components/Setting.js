@@ -150,7 +150,9 @@ class Setting extends Component {
         <View style={styles.profile}>
           <TouchableHighlight
             onPress={this.onAvatarPress.bind(this)}
-            style={styles.avatar}>
+            style={styles.avatar}
+            underlayColor='#A8A8A8'
+          >
             <View style={styles.avatarContainer}>
               <Text style={styles.itemText}>
                 头像
@@ -167,7 +169,9 @@ class Setting extends Component {
           <View style={styles.separtor}></View>
           <TouchableHighlight
             onPress={this.onNicknamePress.bind(this)}
-            style={styles.nickname}>
+            style={styles.nickname}
+            underlayColor='#A8A8A8'
+          >
             <View style={styles.nicknameContainer}>
               <Text style={styles.itemText}>
                 昵称
@@ -184,7 +188,9 @@ class Setting extends Component {
         </View>
         <TouchableHighlight
           onPress={this.onExitPress.bind(this)}
-          style={styles.exit}>
+          style={styles.exit}
+          underlayColor='#A8A8A8'
+        >
           <Text style={styles.exitText}>
             退出登陆
           </Text>

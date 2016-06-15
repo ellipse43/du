@@ -45,7 +45,8 @@ export default class Magic extends React.Component {
     return (
       <Icon
         name='ios-add-circle'
-        onPress={this._onPressButton.bind(this)} style={styles.magic}
+        onPress={this._onPressButton.bind(this)}
+        style={styles.magic}
       >
       </Icon>
     )
@@ -58,5 +59,6 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
     fontSize: 56,
+    backgroundColor: 'rgba(0, 0, 0, 0)',
   },
 });

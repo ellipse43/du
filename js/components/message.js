@@ -54,7 +54,6 @@ export default class Message extends React.Component {
       }
     });
 
-
     this.setModalVisible(true);
     const msg = MessageModel.new({content: this.state.content, imgs: imgs});
     msg.set('ACL', new AV.ACL(this.props.currentUser));
@@ -253,6 +252,7 @@ const styles = StyleSheet.create({
     height: 80,
     margin: 5,
     fontSize: 18,
+    fontFamily: 'Avenir-Light',
   },
   imageTool: {
     marginTop: 10,
