@@ -82,7 +82,11 @@ export default class Home extends React.Component {
           </Text>
         </View>
         {messageList}
-        <MagicView navigator={this.props.navigator} onMessageCreate={this.onMessageCreate.bind(this)} />
+        <MagicView
+          navigator={this.props.navigator}
+          onMessageCreate={this.onMessageCreate.bind(this)}
+          currentUser={this.state.currentUser}
+        />
       </View>
     )
   }

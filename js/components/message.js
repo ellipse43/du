@@ -53,18 +53,17 @@ export default class Message extends React.Component {
         imgs.push(item.key);
       }
     });
-
-    this.setModalVisible(true);
     const msg = MessageModel.new({content: this.state.content, imgs: imgs});
+    this.setModalVisible(true);
+
     msg.set('ACL', new AV.ACL(this.props.currentUser));
+
     msg.save().then((msg) => {
       this.props.onMessageCreate(msg);
-      this.props.navigator.pop();
     }, (error) => {
-      console.log(`Error: ${error.code} ${error.message}`);
+      this.setModalVisible(false);
     });
-    this.setModalVisible(false);
-
+    this.props.navigator.pop();
   }
 
   _onImageSelect() {
@@ -212,7 +211,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10},
+    borderRadius: 10,
+  },
   scollView: {
     height: 300,
   },

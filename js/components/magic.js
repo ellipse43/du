@@ -30,6 +30,8 @@ export default class Magic extends React.Component {
           this.pushComponent = component;
         },
         onMessageCreate: this.props.onMessageCreate,
+        currentUser: this.props.currentUser,
+        navigator: this.props.navigator,
       },
       onLeftButtonPress: () => {
         this.pushComponent && this.pushComponent.cancel();
