@@ -24,11 +24,16 @@ import {putPolicy} from '../utils/qiniu';
 import {MessageModel} from './Model.js';
 
 export default class Message extends React.Component {
+
+  static STATUS_LOADING = 'loading';
+  static STATUS_ERROR = 'error';
+
   constructor(props) {
     super(props);
     this.state = {
       content: '',
       imgs: [],
+      status: Message.STATUS_LOADING,
       animationType: 'none',
       modalVisible: false,
       transparent: true,
@@ -47,23 +52,26 @@ export default class Message extends React.Component {
       Alert.alert('警告', '输入字数太少');
       return;
     }
+    this.setModalVisible(true);
+
     const imgs = [];
     this.state.imgs.forEach((item) => {
       if (item.key != null) {
         imgs.push(item.key);
       }
     });
-    const msg = MessageModel.new({content: this.state.content, imgs: imgs});
-    this.setModalVisible(true);
 
+    const msg = MessageModel.new({content: this.state.content, imgs: imgs});
     msg.set('ACL', new AV.ACL(this.props.currentUser));
 
+    this.props.onMessageCreate(msg);
+
     msg.save().then((msg) => {
-      this.props.onMessageCreate(msg);
-    }, (error) => {
       this.setModalVisible(false);
+      this.props.navigator.pop();
+    }, (error) => {
+      this.setState({status: Message.STATUS_ERROR});
     });
-    this.props.navigator.pop();
   }
 
   _onImageSelect() {
@@ -144,6 +152,17 @@ export default class Message extends React.Component {
       imgBtn = <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} ><Text style={styles.addText} >+</Text></TouchableOpacity>
     }
 
+    let modalContent = null;
+    if (this.state.status === Message.STATUS_LOADING) {
+      modalContent = <ActivityIndicatorIOS size='large' animating={true} />
+    } else if (this.status === Message.STATUS_ERROR) {
+      modalContent = <Text>加载错误</Text>;
+      setTimeout(() => {
+        this.setState({status: Message.STATUS_LOADING});
+        this.setModalVisible(false);
+      }, 1);
+    }
+
     return (
       <View style={styles.container}>
         <Modal
@@ -154,10 +173,7 @@ export default class Message extends React.Component {
         >
           <View style={styles.modalContaier}>
             <View style={styles.modalEntity}>
-              <ActivityIndicatorIOS
-                size='large'
-                animating={true}
-              />
+              <ActivityIndicatorIOS size='large' animating={true} />
             </View>
           </View>
         </Modal>
