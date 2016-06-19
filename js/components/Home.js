@@ -76,7 +76,6 @@ export default class Home extends React.Component {
             style={styles.avatar} >
             {avatar}
           </TouchableHighlight>
-
           <Text style={styles.nicknameText}>
             {nickname}
           </Text>

@@ -2,8 +2,11 @@
 
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
+import Lightbox from 'react-native-lightbox';
+import Carousel from 'react-native-looped-carousel';
+
 import {socialFormatTime} from '../utils/time';
-import {QINIU_IMG_URI} from '../const';
+import {QINIU_IMG_URI, WINDOW_WIDTH} from '../const';
 
 export default class MessageItem extends React.Component {
   constructor(props) {
@@ -19,7 +22,6 @@ export default class MessageItem extends React.Component {
       createdStr: socialFormatTime(this.props.rowData.get('createdAt')),
       imgs: imgs,
     };
-
   }
 
   componentWillReceiveProps(nextProps) {
@@ -35,6 +37,39 @@ export default class MessageItem extends React.Component {
     });
   }
 
+  renderCarousel() {
+    return (
+      <Carousel autoplay={false} style={{width: WINDOW_WIDTH, height: WINDOW_WIDTH}}>
+        {this.state.imgs.map((item, index) => {
+          return (
+            <Image
+              key={index}
+              style={{flex: 1}}
+              resizeMode='contain'
+              source={{uri:`${QINIU_IMG_URI}/${item}`}}
+            />
+          )
+        })}
+      </Carousel>
+    )
+  }
+
+  renderImgs(imgs) {
+    return (
+      <View style={styles.imgs}>
+        {imgs.map((item, index) => {
+          return (
+            <Lightbox navigator={this.props.navigator} springConfig={{tension: 15, friction: 7}} swipeToDismiss={false} renderContent={this.renderCarousel.bind(this)} key={index} style={styles.imgBox}>
+              <Image
+                style={styles.imgItem}
+                source={{uri: `${QINIU_IMG_URI}/${item}`}} />
+            </Lightbox>
+          )
+        })}
+      </View>
+    )
+  }
+
   render() {
     const imgLineOne = this.state.imgs.slice(0, 2);
     const imgLineTwo = this.state.imgs.slice(2, 4);
@@ -44,26 +79,8 @@ export default class MessageItem extends React.Component {
         <Text style={styles.message} allowFontScaling={true}>
           {this.state.content}
         </Text>
-        <View style={styles.imgs}>
-          {imgLineOne.map((item, index) => {
-            return (
-              <Image
-                key={index}
-                style={styles.imgItem}
-                source={{uri: `${QINIU_IMG_URI}/${item}`}} />
-            )
-          })}
-        </View>
-        <View style={styles.imgs}>
-          {imgLineTwo.map((item, index) => {
-            return (
-              <Image
-                key={index}
-                style={styles.imgItem}
-                source={{uri: `${QINIU_IMG_URI}/${item}`}} />
-            )
-          })}
-        </View>
+        {this.renderImgs(imgLineOne)}
+        {this.renderImgs(imgLineTwo)}
         <Text style={styles.createdText}>
           {this.state.createdStr}
         </Text>
@@ -88,11 +105,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  imgBox: {
+    marginTop: 5,
+    marginRight: 5,
+  },
   imgItem: {
     width: 100,
     height: 100,
-    marginTop: 5,
-    marginRight: 5
   },
   createdText: {
     fontSize: 10,
