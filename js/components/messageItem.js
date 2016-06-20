@@ -5,6 +5,7 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import Lightbox from 'react-native-lightbox';
 import Carousel from 'react-native-looped-carousel';
 
+import CacheImage from './CacheImage';
 import {socialFormatTime} from '../utils/time';
 import {QINIU_IMG_URI, WINDOW_WIDTH} from '../const';
 
@@ -42,11 +43,11 @@ export default class MessageItem extends React.Component {
       <Carousel autoplay={false} style={{width: WINDOW_WIDTH, height: WINDOW_WIDTH}}>
         {this.state.imgs.map((item, index) => {
           return (
-            <Image
+            <CacheImage
               key={index}
               style={{flex: 1}}
               resizeMode='contain'
-              source={{uri:`${QINIU_IMG_URI}/${item}`}}
+              source={{uri:`${item}`}}
             />
           )
         })}
@@ -60,9 +61,9 @@ export default class MessageItem extends React.Component {
         {imgs.map((item, index) => {
           return (
             <Lightbox navigator={this.props.navigator} springConfig={{tension: 15, friction: 7}} swipeToDismiss={false} renderContent={this.renderCarousel.bind(this)} key={index} style={styles.imgBox}>
-              <Image
+              <CacheImage
                 style={styles.imgItem}
-                source={{uri: `${QINIU_IMG_URI}/${item}`}} />
+                source={{uri: `${item}`}} />
             </Lightbox>
           )
         })}

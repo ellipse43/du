@@ -4,5 +4,10 @@ import {Dimensions} from 'react-native';
 
 const QINIU_IMG_URI = 'http://o8a6ibmov.bkt.clouddn.com';
 const WINDOW_WIDTH = Dimensions.get('window').width;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
 
-export {QINIU_IMG_URI, WINDOW_WIDTH};
+export {
+  QINIU_IMG_URI,
+  WINDOW_WIDTH,
+  WINDOW_HEIGHT,
+};
