@@ -18,15 +18,17 @@ export default class CacheImage extends React.Component {
     this.state = {
       source: null,
     };
+
+    this.sourceUpdate = this.sourceUpdate.bind(this);
   }
 
   setNativeProps(nativeProps) {
     this._root.setNativeProps(nativeProps);
   }
 
-  componentDidMount() {
-    if (this.props.source) {
-      const uri = this.props.source.uri;
+  sourceUpdate(source) {
+    if (source) {
+      const uri = source.uri;
       if (true) {
         const filetype = uri.replace(/.*\.(.*)/, '$1');
         const filename = `${md5(uri)}.${filetype}`;
@@ -47,6 +49,19 @@ export default class CacheImage extends React.Component {
         });
       }
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.source.uri == this.props.source.uri) {
+      return;
+    }
+    // 先至为空
+    this.setState({source: null});
+    this.sourceUpdate(nextProps.source);
+  }
+
+  componentDidMount() {
+    this.sourceUpdate(this.props.source);
   }
 
   render() {

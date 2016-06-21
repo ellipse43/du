@@ -110,7 +110,7 @@ export default class Message extends React.Component {
       }
       else {
         this.setModalVisible(true);
-        const dataSource = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+        // const dataSource = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
         const uptoken = putPolicy.token();
         const date = new Date();
         const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
