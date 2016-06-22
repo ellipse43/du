@@ -1,11 +1,24 @@
 'use strict';
 
 import React from 'react';
-import {View, StyleSheet, Text, ListView, RecyclerViewBackedScrollView, RefreshControl} from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  ListView,
+  RecyclerViewBackedScrollView,
+  RefreshControl,
+  ActivityIndicatorIOS,
+} from 'react-native';
 
 import AV from 'avoscloud-sdk';
 import MessageItemView from './MessageItem.js';
-import {MessageModel, messageQuery} from './Model.js';
+import {
+  MessageModel,
+  messageQuery,
+} from './Model.js';
+import {PER_PAGE} from '../const.js';
 
 export default class MessageList extends React.Component {
   constructor(props) {
@@ -64,13 +77,16 @@ export default class MessageList extends React.Component {
     if (item) {
       this.query.lessThan('objectId', item.get('objectId'));
     }
-    this.query.limit(5);
+    this.query.limit(PER_PAGE);
     this.query.addDescending('createdAt');
     this.query.find().then((rs) => {
-      if (rs.length < 5) {
+      if (rs.length < PER_PAGE) {
         this.setState({isEndReached: true});
       }
       let items = this.state.items.slice();
+      // if (items.length > 10) {
+      //   return ;
+      // }
       items.push.apply(items, rs);
       this.setState({
         isLoading: false,
@@ -83,15 +99,35 @@ export default class MessageList extends React.Component {
   }
 
   render() {
+    let loadingView = null;
+    if (this.state.isLoading) {
+      loadingView =
+        <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', height: 40}}>
+          <ActivityIndicatorIOS
+            size='small'
+            animating={true}
+            style={{padding: 5}}
+          />
+          <Text style={{backgroundColor: '#FFFFFF'}}>
+            正在加载...
+          </Text>
+        </View>;
+    }
+
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
-        renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
-        renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.separator} />}
-        onEndReached={this._onEndReached.bind(this)}
-        enableEmptySections={true}
-      />
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          <ListView
+            dataSource={this.state.dataSource}
+            renderRow={this.renderRow}
+            renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
+            renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.separator} />}
+            onEndReached={this._onEndReached.bind(this)}
+            enableEmptySections={true}
+          />
+          {loadingView}
+        </ScrollView>
+      </View>
     )
   }
 
@@ -107,9 +143,16 @@ export default class MessageList extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#EDEDED',
+  },
+  scrollView: {
+    height: 300,
+  },
   separator: {
     height: 2,
     backgroundColor: '#EDEDED'
-  }
+  },
 });
 

@@ -48,7 +48,6 @@ class Login extends Component {
         Alert.alert('警告', '无法找到用户');
       }
     });
-
   }
 
   _onForgetPasswordPress() {
