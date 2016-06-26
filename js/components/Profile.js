@@ -10,6 +10,7 @@ import {
   Text,
   TouchableOpacity,
   NativeModules,
+  StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import qiniu from 'react-native-qiniu';
@@ -68,6 +69,7 @@ class Profile extends Component {
         const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
         const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
 
+        StatusBar.setNetworkActivityIndicatorVisible(true);
         qiniu.rpc.uploadFile(response.uri, uptoken, {key: key}).then(resp => {
           let user = this.state.currentUser;
           if (user) {
@@ -80,7 +82,9 @@ class Profile extends Component {
           }
           this.setState({currentUser: user});
         }).catch(error => {
-          // todo
+
+        }).finally(() => {
+          StatusBar.setNetworkActivityIndicatorVisible(false);
         });
       }
     });
