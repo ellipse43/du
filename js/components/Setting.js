@@ -85,7 +85,7 @@ class Setting extends Component {
         const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
         const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
 
-        qiniu.rpc.uploadImage(response.uri, key, uptoken, function(resp) {
+        qiniu.rpc.uploadFile(response.uri, uptoken, {key: key}).then(resp => {
           let user = this.state.currentUser;
           if (user) {
             user.set('avatar', key);
@@ -96,7 +96,9 @@ class Setting extends Component {
             });
           }
           this.setState({currentUser: user});
-        }.bind(this));
+        }).catch(error => {
+          // todo
+        });
       }
     });
   }

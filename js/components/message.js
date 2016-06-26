@@ -116,15 +116,25 @@ export default class Message extends React.Component {
         const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
         const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
 
-        qiniu.rpc.uploadImage(response.uri, key, uptoken, function(resp) {
+        qiniu.rpc.uploadFile(response.uri, uptoken, {key: key}).then(resp => {
+          if (this.state.modalVisible) {
+            this.setModalVisible(false);
+            let imgs = this.state.imgs.slice();
+            imgs.push(source);
+            this.setState({
+              imgs: imgs
+            });
+          }
+        }).catch(error => {
           this.setModalVisible(false);
+        });
 
-          let imgs = this.state.imgs.slice();
-          imgs.push(source);
-          this.setState({
-            imgs: imgs
-          });
-        }.bind(this));
+        setTimeout(() => {
+          if (this.state.modalVisible) {
+            this.setModalVisible(false);
+            Alert.alert('错误', '请求超时!');
+          }
+        }, 10000);
       }
     });
   }
