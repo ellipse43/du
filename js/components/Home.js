@@ -8,6 +8,7 @@ import AV from 'avoscloud-sdk';
 import MessageList from './MessageList.js';
 import MagicView from './Magic.js';
 import SettingView from './Setting.js';
+import ProfileView from './Profile.js';
 import {QINIU_IMG_URI} from '../const';
 
 
@@ -37,17 +38,30 @@ export default class Home extends React.Component {
 
   _onAvatarPress() {
     this.props.navigator.push({
-      title: '设置',
-      component: SettingView,
+      title: this.state.currentUser.get('nickname'),
+      component: ProfileView,
       navigationBarHidden: false,
       barTintColor: '#FFFFFF',
-      leftButtonTitle: ' ',
+      leftButtonTitle: '',
       passProps: {
         currentUser: this.state.currentUser,
       },
-      rightButtonTitle: '完成',
+      rightButtonTitle: '设置',
       onRightButtonPress: () => {
-        this.props.navigator.pop();
+        this.props.navigator.push({
+          title: '设置',
+          component: SettingView,
+          navigationBarHidden: false,
+          barTintColor: '#FFFFFF',
+          passProps: {
+            currentUser: this.state.currentUser,
+          },
+          leftButtonTitle: ' ',
+          rightButtonTitle: '完成',
+          onRightButtonPress: () => {
+            this.props.navigator.pop();
+          },
+        });
       },
     });
   }
