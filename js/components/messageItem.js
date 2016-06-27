@@ -48,6 +48,7 @@ export default class MessageItem extends React.Component {
               style={{flex: 1}}
               resizeMode='contain'
               source={{uri:`${item}`}}
+              thumbnail={false}
             />
           )
         })}
@@ -63,7 +64,9 @@ export default class MessageItem extends React.Component {
             <Lightbox navigator={this.props.navigator} springConfig={{tension: 15, friction: 7}} swipeToDismiss={false} renderContent={this.renderCarousel.bind(this)} key={index} style={styles.imgBox}>
               <CacheImage
                 style={styles.imgItem}
-                source={{uri: `${item}`}} />
+                source={{uri: `${item}`}}
+                thumbnail={true}
+              />
             </Lightbox>
           )
         })}

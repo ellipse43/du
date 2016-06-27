@@ -17,6 +17,7 @@ export default class CacheImage extends React.Component {
 
     this.state = {
       source: null,
+      thumbnail: props.thumbnail? true : false,
     };
 
     this.sourceUpdate = this.sourceUpdate.bind(this);
@@ -32,8 +33,14 @@ export default class CacheImage extends React.Component {
       if (true) {
         const filetype = uri.replace(/.*\.(.*)/, '$1');
         const filename = `${md5(uri)}.${filetype}`;
-        const filepath = `${ImageCachePath}/${filename}`;
-        const downloadURL = `${QINIU_IMG_URI}/${uri}`;
+        let filepath, downloadURL;
+        if (this.state.thumbnail) {
+          filepath = `${ImageCachePath}/${filename}.200x200`;
+          downloadURL = `${QINIU_IMG_URI}/${uri}?imageView2/1/w/200/h/200/q/100`;
+        } else {
+          filepath = `${ImageCachePath}/${filename}`;
+          downloadURL = `${QINIU_IMG_URI}/${uri}`;
+        }
 
         FS.exists(filepath).then(exists => {
           if (exists) {
