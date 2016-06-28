@@ -29,7 +29,7 @@ export default class MessageList extends React.Component {
     this.state = {
       isRefreshing: false,
       isEndReached: false,
-      isLoading: false,
+      isLoading: true,
       items: items,
       dataSource: ds.cloneWithRows(items),
     };
@@ -40,7 +40,11 @@ export default class MessageList extends React.Component {
     this.query.limit(5);
     this.query.addDescending('createdAt');
     this.query.find().then((items) => {
-      this.setState({items: items, dataSource: this.state.dataSource.cloneWithRows(items)});
+      this.setState({
+        items: items,
+        dataSource: this.state.dataSource.cloneWithRows(items),
+        isLoading: false,
+      });
     }, (error) => {
       console.log(`Error: ${error.code} ${error.message}`);
     });
@@ -84,9 +88,6 @@ export default class MessageList extends React.Component {
         this.setState({isEndReached: true});
       }
       let items = this.state.items.slice();
-      // if (items.length > 10) {
-      //   return ;
-      // }
       items.push.apply(items, rs);
       this.setState({
         isLoading: false,
