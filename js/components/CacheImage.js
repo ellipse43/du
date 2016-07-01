@@ -4,11 +4,8 @@ import React from 'react';
 import {View, Image, Stylesheet} from 'react-native';
 import FS from 'react-native-fs';
 import md5 from 'blueimp-md5';
-import {QINIU_IMG_URI} from '../const';
+import {QINIU_IMG_URI, ImageCachePath} from '../const';
 
-
-// fix: images
-const ImageCachePath = FS.CachesDirectoryPath;
 
 export default class CacheImage extends React.Component {
 
@@ -47,10 +44,11 @@ export default class CacheImage extends React.Component {
             this.setState({source: filepath});
           } else {
             FS.downloadFile({fromUrl: downloadURL, toFile: filepath}).then(res => {
-              console.log(res);
-              this.setState({source: filepath});
+              if (res.statusCode == 200) {
+                this.setState({source: filepath});
+              }
             }).catch(err => {
-              console.log(err);
+              console.log('error load', err);
             });
           }
         });

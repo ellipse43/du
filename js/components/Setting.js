@@ -15,11 +15,12 @@ import {
 
 import AV from 'avoscloud-sdk';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FS from 'react-native-fs';
 import qiniu from 'react-native-qiniu';
 import LoginView from './Login.js';
 import NicknameView from './Nickname.js';
 import {putPolicy} from '../utils/qiniu';
-import {QINIU_IMG_URI} from '../const';
+import {QINIU_IMG_URI, ImageCachePath} from '../const';
 
 
 class Setting extends Component {
@@ -29,7 +30,12 @@ class Setting extends Component {
 
     this.state = {
       currentUser: this.props.currentUser,
+      cacheSize: '0 MB',
     };
+  }
+
+  componentDidMount() {
+    this.cacheCalculate();
   }
 
   onExitPress() {
@@ -140,6 +146,25 @@ class Setting extends Component {
     });
   }
 
+  cacheCalculate() {
+    FS.readDir(ImageCachePath).then((result) => {
+      let size = 0;
+      result.map((item) => {
+        size += item.size;
+      });
+      this.setState({cacheSize: `${Math.floor(size / 1024 / 1024)} MB`});
+    });
+  }
+
+  onCacheClean() {
+    FS.readDir(ImageCachePath).then((result) => {
+      result.map((item) => {
+        FS.unlink(item.path);
+      });
+      this.cacheCalculate();
+    });
+  }
+
   render() {
     const nickname = this.state.currentUser.get('nickname');
     const avatar = this.state.currentUser.get('avatar');
@@ -188,6 +213,28 @@ class Setting extends Component {
             </View>
           </TouchableHighlight>
         </View>
+
+        <View style={styles.group}>
+          <TouchableHighlight
+            onPress={this.onCacheClean.bind(this)}
+            style={styles.basic}
+            underlayColor='#A8A8A8'
+          >
+            <View style={styles.avatarContainer}>
+              <Text style={styles.itemText}>
+                清除缓存
+              </Text>
+              <View style={styles.basicRight}>
+                <Text style={styles.nicknameLabel}>
+                  {this.state.cacheSize}
+                </Text>
+                <Icon name='ios-arrow-forward' size={18} color={'#CCCCCC'}>
+                </Icon>
+              </View>
+            </View>
+          </TouchableHighlight>
+        </View>
+
         <TouchableHighlight
           onPress={this.onExitPress.bind(this)}
           style={styles.exit}
@@ -220,6 +267,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   profile: {
+    marginTop: 10,
+    backgroundColor: '#FFFFFF',
+  },
+  group: {
     marginTop: 10,
     backgroundColor: '#FFFFFF',
   },
@@ -268,6 +319,28 @@ const styles = StyleSheet.create({
     color: '#BDBDBD',
     marginRight: 10,
   },
+  basic: {
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    width: Dimensions.get('window').width,
+  },
+  basicContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  basicRight: {
+    flexDirection: 'row',
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  basicLabel: {
+    fontSize: 16,
+    color: '#BDBDBD',
+    marginRight: 10,
+  },
   item: {
     marginTop: 10,
     height: 40,
@@ -277,7 +350,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     marginLeft: 10,
-    fontSize: 16,
+    fontSize: 14,
   },
   exit: {
     marginTop: 10,
