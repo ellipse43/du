@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   View,
-  ScrollView,
   StyleSheet,
   Text,
   ListView,
@@ -29,6 +28,7 @@ export default class MessageList extends React.Component {
     this.state = {
       isRefreshing: false,
       isEndReached: false,
+      isBottomReached: false,
       isLoading: true,
       items: items,
       dataSource: ds.cloneWithRows(items),
@@ -37,7 +37,7 @@ export default class MessageList extends React.Component {
   }
 
   componentWillMount() {
-    this.query.limit(5);
+    this.query.limit(PER_PAGE);
     this.query.addDescending('createdAt');
     this.query.find().then((items) => {
       this.setState({
@@ -75,6 +75,10 @@ export default class MessageList extends React.Component {
     if (this.state.isLoading) {
       return;
     }
+    if (this.state.isBottomReached) {
+      return;
+    }
+
     this.setState({isLoading: true});
 
     const item = this.state.items[this.state.items.length - 1];
@@ -85,12 +89,13 @@ export default class MessageList extends React.Component {
     this.query.addDescending('createdAt');
     this.query.find().then((rs) => {
       if (rs.length < PER_PAGE) {
-        this.setState({isEndReached: true});
+        this.setState({isBottomReached: true});
       }
       let items = this.state.items.slice();
       items.push.apply(items, rs);
       this.setState({
         isLoading: false,
+        isEndReached: false,
         items: items,
         dataSource: this.state.dataSource.cloneWithRows(items),
       });
@@ -100,6 +105,33 @@ export default class MessageList extends React.Component {
   }
 
   render() {
+    return (
+      <View style={styles.container}>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderRow}
+          renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
+          renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.separator} />}
+          onEndReached={this._onEndReached.bind(this)}
+          onEndReachedThreshold={0}
+          enableEmptySections={true}
+          renderFooter={this.renderFooter.bind(this)}
+        />
+      </View>
+    )
+  }
+
+  renderRow(rowData: Map, sectionID: number, rowID: number) {
+    return (
+      <MessageItemView
+        rowData={rowData}
+        sectionID={sectionID}
+        rowID={rowID}
+      />
+    )
+  }
+
+  renderFooter() {
     let loadingView = null;
     if (this.state.isLoading) {
       loadingView =
@@ -114,42 +146,15 @@ export default class MessageList extends React.Component {
           </Text>
         </View>;
     }
-
-    return (
-      <View style={styles.container}>
-        <ScrollView style={styles.scrollView}>
-          <ListView
-            dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
-            renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
-            renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.separator} />}
-            onEndReached={this._onEndReached.bind(this)}
-            enableEmptySections={true}
-          />
-          {loadingView}
-        </ScrollView>
-      </View>
-    )
+    return loadingView;
   }
 
-  renderRow(rowData: Map, sectionID: number, rowID: number) {
-    return (
-      <MessageItemView
-        rowData={rowData}
-        sectionID={sectionID}
-        rowID={rowID}
-      />
-    )
-  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EDEDED',
-  },
-  scrollView: {
-    height: 300,
   },
   separator: {
     height: 2,
