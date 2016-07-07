@@ -15,7 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import qiniu from 'react-native-qiniu';
 
-import {messageQuery} from './Model';
+import {MessageQuery} from './Model';
 import {putPolicy} from '../utils/qiniu';
 import {QINIU_IMG_URI} from '../const';
 
@@ -31,8 +31,7 @@ class Profile extends Component {
   }
 
   componentWillMount() {
-    messageQuery.limit(0);
-    messageQuery.count().then((number) => {
+    MessageQuery.total().then((number) => {
       this.setState({messageNumber: number});
     });
   }

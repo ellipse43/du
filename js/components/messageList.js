@@ -15,7 +15,7 @@ import AV from 'avoscloud-sdk';
 import MessageItemView from './MessageItem.js';
 import {
   MessageModel,
-  messageQuery,
+  MessageQuery,
 } from './Model.js';
 import {PER_PAGE} from '../const.js';
 
@@ -36,9 +36,7 @@ export default class MessageList extends React.Component {
   }
 
   componentWillMount() {
-    messageQuery.limit(PER_PAGE);
-    messageQuery.addDescending('createdAt');
-    messageQuery.find().then((items) => {
+    MessageQuery.paginate().then((items) => {
       this.setState({
         items: items,
         dataSource: this.state.dataSource.cloneWithRows(items),
@@ -80,13 +78,12 @@ export default class MessageList extends React.Component {
 
     this.setState({isLoading: true});
 
+    let objId = null;
     const item = this.state.items[this.state.items.length - 1];
     if (item) {
-      messageQuery.lessThan('objectId', item.get('objectId'));
+      objId = item.get('objectId');
     }
-    messageQuery.limit(PER_PAGE);
-    messageQuery.addDescending('createdAt');
-    messageQuery.find().then((rs) => {
+    MessageQuery.paginate(objId).then((rs) => {
       if (rs.length < PER_PAGE) {
         this.setState({isBottomReached: true});
       }
