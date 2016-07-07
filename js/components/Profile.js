@@ -15,6 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import qiniu from 'react-native-qiniu';
 
+import {messageQuery} from './Model';
 import {putPolicy} from '../utils/qiniu';
 import {QINIU_IMG_URI} from '../const';
 
@@ -25,7 +26,15 @@ class Profile extends Component {
 
     this.state = {
       currentUser: this.props.currentUser,
+      messageNumber: '',
     };
+  }
+
+  componentWillMount() {
+    messageQuery.limit(0);
+    messageQuery.count().then((number) => {
+      this.setState({messageNumber: number});
+    });
   }
 
   onAvatarPress() {
@@ -108,7 +117,7 @@ class Profile extends Component {
             <View style={styles.panel}>
               <TouchableOpacity style={styles.panelBtn}>
                 <Text style={{}}>
-                  1
+                  {this.state.messageNumber}
                 </Text>
                 <Text style={styles.panelBtnLabel}>
                   帖子

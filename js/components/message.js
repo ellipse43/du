@@ -40,6 +40,11 @@ export default class Message extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    this.uploadTimer && clearTimeout(this.uploadTimer);
+    this.loadTimer && clearTimeout(this.loadTimer);
+  }
+
   cancel() {
     if (this.state.content.length > 0 || this.state.imgs.length > 0) {
 
@@ -129,12 +134,12 @@ export default class Message extends React.Component {
           this.setModalVisible(false);
         });
 
-        setTimeout(() => {
+        this.uploadTimer = setTimeout(() => {
           if (this.state.modalVisible) {
             this.setModalVisible(false);
             Alert.alert('错误', '请求超时!');
           }
-        }, 10000);
+        }, 15000);
       }
     });
   }
@@ -167,7 +172,7 @@ export default class Message extends React.Component {
       modalContent = <ActivityIndicatorIOS size='large' animating={true} />
     } else if (this.status === Message.STATUS_ERROR) {
       modalContent = <Text>加载错误</Text>;
-      setTimeout(() => {
+      this.loadTimer = setTimeout(() => {
         this.setState({status: Message.STATUS_LOADING});
         this.setModalVisible(false);
       }, 1);

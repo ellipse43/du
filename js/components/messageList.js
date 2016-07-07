@@ -33,13 +33,12 @@ export default class MessageList extends React.Component {
       items: items,
       dataSource: ds.cloneWithRows(items),
     };
-    this.query = new AV.Query('Message');
   }
 
   componentWillMount() {
-    this.query.limit(PER_PAGE);
-    this.query.addDescending('createdAt');
-    this.query.find().then((items) => {
+    messageQuery.limit(PER_PAGE);
+    messageQuery.addDescending('createdAt');
+    messageQuery.find().then((items) => {
       this.setState({
         items: items,
         dataSource: this.state.dataSource.cloneWithRows(items),
@@ -83,11 +82,11 @@ export default class MessageList extends React.Component {
 
     const item = this.state.items[this.state.items.length - 1];
     if (item) {
-      this.query.lessThan('objectId', item.get('objectId'));
+      messageQuery.lessThan('objectId', item.get('objectId'));
     }
-    this.query.limit(PER_PAGE);
-    this.query.addDescending('createdAt');
-    this.query.find().then((rs) => {
+    messageQuery.limit(PER_PAGE);
+    messageQuery.addDescending('createdAt');
+    messageQuery.find().then((rs) => {
       if (rs.length < PER_PAGE) {
         this.setState({isBottomReached: true});
       }
