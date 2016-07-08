@@ -9,7 +9,6 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  NativeModules,
   StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,6 +17,7 @@ import qiniu from 'react-native-qiniu';
 import {MessageQuery} from './Model';
 import {putPolicy} from '../utils/qiniu';
 import {QINIU_IMG_URI} from '../const';
+import {MMedia} from '../utils/MMedia';
 
 class Profile extends Component {
 
@@ -37,64 +37,29 @@ class Profile extends Component {
   }
 
   onAvatarPress() {
-    const options = {
-      title: '',
-      cancelButtonTitle: '取消',
-      takePhotoButtonTitle: '拍照', // specify null or empty string to remove this button
-      chooseFromLibraryButtonTitle: '选择照片', // specify null or empty string to remove this button
-      cameraType: '返回', // 'front' or 'back'
-      mediaType: '照片', // 'photo' or 'video'
-      videoQuality: 'high', // 'low', 'medium', or 'high'
-      durationLimit: 10, // video recording max time in seconds
-      // maxWidth: 100, // photos only
-      // maxHeight: 100, // photos only
-      aspectX: 2, // android only - aspectX:aspectY, the cropping image's ratio of width to height
-      aspectY: 1, // android only - aspectX:aspectY, the cropping image's ratio of width to height
-      quality: 1, // 0 to 1, photos only
-      angle: 0, // android only, photos only
-      allowsEditing: false, // Built in functionality to resize/reposition the image after selection
-      noData: false, // photos only - disables the base64 `data` field from being generated (greatly improves performance on large photos)
-      storageOptions: { // if this key is provided, the image will get saved in the documents directory on ios, and the pictures directory on android (rather than a temporary directory)
-        skipBackup: true, // ios only - image will NOT be backed up to icloud
-        path: 'images' // ios only - will save image at /Documents/images rather than the root
-      }
-    };
+    MMedia.showImagePicker((response) => {
+      const uptoken = putPolicy.token();
+      const date = new Date();
+      const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
+      const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
 
-    NativeModules.ImagePickerManager.showImagePicker(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      }
-      else if (response.error) {
-        console.log('ImagePickerManager Error: ', response.error);
-      }
-      else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      }
-      else {
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
-        const uptoken = putPolicy.token();
-        const date = new Date();
-        const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
-        const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
+      StatusBar.setNetworkActivityIndicatorVisible(true);
+      qiniu.rpc.uploadFile(response.uri, uptoken, {key: key}).then(resp => {
+        let user = this.state.currentUser;
+        if (user) {
+          user.set('avatar', key);
+          user.save().then(() => {
+            console.log('Save Avatar Success');
+          }, (error) => {
+            console.log(`Save Avatar Fail: ${error}`);
+          });
+        }
+        this.setState({currentUser: user});
+      }).catch(error => {
 
-        StatusBar.setNetworkActivityIndicatorVisible(true);
-        qiniu.rpc.uploadFile(response.uri, uptoken, {key: key}).then(resp => {
-          let user = this.state.currentUser;
-          if (user) {
-            user.set('avatar', key);
-            user.save().then(() => {
-              console.log('Save Avatar Success');
-            }, (error) => {
-              console.log(`Save Avatar Fail: ${error}`);
-            });
-          }
-          this.setState({currentUser: user});
-        }).catch(error => {
-
-        }).finally(() => {
-          StatusBar.setNetworkActivityIndicatorVisible(false);
-        });
-      }
+      }).finally(() => {
+        StatusBar.setNetworkActivityIndicatorVisible(false);
+      });
     });
   }
 
