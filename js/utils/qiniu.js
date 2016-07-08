@@ -2,8 +2,21 @@
 
 import qiniu from 'react-native-qiniu';
 
-const putPolicy = new qiniu.auth.PutPolicy2(
-  {scope: 'du-app'}
-);
+export class Qiniu {
 
-export {putPolicy};
+  static uploadFile(uri, key) {
+    const putPolicy = new qiniu.auth.PutPolicy2(
+      {
+        scope: 'du-app',
+      }
+    );
+    const uptoken = putPolicy.token();
+    return qiniu.rpc.uploadFile(uri, uptoken, {key: key});
+  }
+
+  static genImageKey(format='jpeg') {
+    const date = new Date();
+    const prefix = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}`;
+    return `${prefix}.${format}`;
+  }
+}

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import MessageView from './Message.js';
+import MessageView from './Message';
 
 export default class Magic extends React.Component {
   constructor(props) {

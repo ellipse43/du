@@ -19,8 +19,8 @@ import AV from 'avoscloud-sdk';
 import qiniu from 'react-native-qiniu';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LocationView from './Location';
-import {putPolicy} from '../utils/qiniu';
-import {MessageModel} from './Model';
+import {Qiniu} from '../utils/Qiniu';
+import {MessageModel} from '../utils/Model';
 import {MMedia} from '../utils/MMedia';
 
 export default class Message extends React.Component {
@@ -82,12 +82,9 @@ export default class Message extends React.Component {
   _onImageSelect() {
     MMedia.showImagePicker((response) => {
       this.setModalVisible(true);
-      const uptoken = putPolicy.token();
-      const date = new Date();
-      const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
       const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
-
-      qiniu.rpc.uploadFile(response.uri, uptoken, {key: key}).then(resp => {
+      const key = Qiniu.genImageKey();
+      Qiniu.uploadFile(response.uri, key).then(resp => {
         if (this.state.modalVisible) {
           this.setModalVisible(false);
           let imgs = this.state.imgs.slice();

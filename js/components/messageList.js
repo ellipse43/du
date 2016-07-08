@@ -12,12 +12,12 @@ import {
 } from 'react-native';
 
 import AV from 'avoscloud-sdk';
-import MessageItemView from './MessageItem.js';
+import MessageItemView from './MessageItem';
 import {
   MessageModel,
   MessageQuery,
-} from './Model.js';
-import {PER_PAGE} from '../const.js';
+} from '../utils/Model';
+import {PER_PAGE} from '../const';
 
 export default class MessageList extends React.Component {
   constructor(props) {

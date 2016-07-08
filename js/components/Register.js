@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import AV from 'avoscloud-sdk';
-import HomeView from './Home.js';
+import HomeView from './Home';
 
 class Register extends Component {
 

@@ -13,9 +13,9 @@ import {
 } from 'react-native';
 import AV from 'avoscloud-sdk';
 
-import MessageList from './MessageList.js';
-import HomeView from './Home.js';
-import RegisterView from './Register.js';
+import MessageList from './MessageList';
+import HomeView from './Home';
+import RegisterView from './Register';
 
 
 class Login extends Component {

@@ -6,7 +6,7 @@ import Lightbox from 'react-native-lightbox';
 import Carousel from 'react-native-looped-carousel';
 
 import CacheImage from './CacheImage';
-import {socialFormatTime} from '../utils/time';
+import {socialFormatTime} from '../utils/Time';
 import {QINIU_IMG_URI, WINDOW_WIDTH, WINDOW_HEIGHT} from '../const';
 
 export default class MessageItem extends React.Component {

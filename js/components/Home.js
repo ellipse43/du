@@ -5,10 +5,10 @@ import {NavigatorIOS, View, StyleSheet, Text, Image, TouchableHighlight, StatusB
 import SideMenu from 'react-native-side-menu';
 import AV from 'avoscloud-sdk';
 
-import MessageList from './MessageList.js';
-import MagicView from './Magic.js';
-import SettingView from './Setting.js';
-import ProfileView from './Profile.js';
+import MessageList from './MessageList';
+import MagicView from './Magic';
+import SettingView from './Setting';
+import ProfileView from './Profile';
 import {QINIU_IMG_URI} from '../const';
 
 

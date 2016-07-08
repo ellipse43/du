@@ -14,10 +14,10 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import qiniu from 'react-native-qiniu';
 
-import {MessageQuery} from './Model';
-import {putPolicy} from '../utils/qiniu';
-import {QINIU_IMG_URI} from '../const';
+import {MessageQuery} from '../utils/Model';
+import {Qiniu} from '../utils/Qiniu';
 import {MMedia} from '../utils/MMedia';
+import {QINIU_IMG_URI} from '../const';
 
 class Profile extends Component {
 
@@ -38,13 +38,9 @@ class Profile extends Component {
 
   onAvatarPress() {
     MMedia.showImagePicker((response) => {
-      const uptoken = putPolicy.token();
-      const date = new Date();
-      const key = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}.jpeg`;
-      const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
-
       StatusBar.setNetworkActivityIndicatorVisible(true);
-      qiniu.rpc.uploadFile(response.uri, uptoken, {key: key}).then(resp => {
+      const key = Qiniu.genImageKey();
+      Qiniu.uploadFile(response.uri, key).then(resp => {
         let user = this.state.currentUser;
         if (user) {
           user.set('avatar', key);
