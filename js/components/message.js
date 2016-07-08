@@ -82,8 +82,8 @@ export default class Message extends React.Component {
   _onImageSelect() {
     MMedia.showImagePicker((response) => {
       this.setModalVisible(true);
-      const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
       const key = Qiniu.genImageKey();
+      const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
       Qiniu.uploadFile(response.uri, key).then(resp => {
         if (this.state.modalVisible) {
           this.setModalVisible(false);
