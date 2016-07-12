@@ -6,6 +6,7 @@ import Lightbox from 'react-native-lightbox';
 import Carousel from 'react-native-looped-carousel';
 
 import CacheImage from './CacheImage';
+import Imagebox from './Imagebox';
 import {socialFormatTime} from '../utils/Time';
 import {QINIU_IMG_URI, WINDOW_WIDTH, WINDOW_HEIGHT} from '../const';
 
@@ -81,16 +82,12 @@ export default class MessageItem extends React.Component {
   }
 
   render() {
-    const imgLineOne = this.state.imgs.slice(0, 2);
-    const imgLineTwo = this.state.imgs.slice(2, 4);
-
     return (
       <View style={styles.row} key={this.props.rowData.get('ObjectId')} >
         <Text style={styles.message} allowFontScaling={true}>
           {this.state.content}
         </Text>
-        {this.renderImgs(imgLineOne)}
-        {this.renderImgs(imgLineTwo)}
+        <Imagebox imgs={this.state.imgs} />
         <Text style={styles.createdText}>
           {this.state.createdStr}
         </Text>
