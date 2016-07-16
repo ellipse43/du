@@ -22,6 +22,7 @@ import LocationView from './Location';
 import {Qiniu} from '../utils/Qiniu';
 import {MessageModel} from '../utils/Model';
 import {MMedia} from '../utils/MMedia';
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default class Message extends React.Component {
 
@@ -80,30 +81,43 @@ export default class Message extends React.Component {
   }
 
   _onImageSelect() {
-    MMedia.showImagePicker((response) => {
+    ImagePicker.openPicker({
+      multiple: true,
+      maxFiles: 4 - this.state.imgs.length,
+    }).then(images => {
       this.setModalVisible(true);
-      const key = Qiniu.genImageKey();
-      const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
-      Qiniu.uploadFile(response.uri, key).then(resp => {
-        if (this.state.modalVisible) {
+      let index = 0, length = images.length, sources = [], keys = [];
+      images.map((img, i) => {
+        const key = Qiniu.genImageKey();
+        const source = {uri: img.path.replace('file://', ''), isStatic: true, key: key};
+        keys.push(key);
+        sources.push(source);
+      })
+      images.map((img, i) => {
+        Qiniu.uploadFile(img.path, keys[i]).then(resp => {
+          if (this.state.modalVisible && resp.status == 200) {
+            index += 1;
+            if (index === length) {
+              this.setModalVisible(false);
+              let imgs = this.state.imgs.slice();
+              imgs.push(...sources);
+              this.setState({
+                imgs: imgs,
+              });
+            };
+          }
+        }).catch(error => {
           this.setModalVisible(false);
-          let imgs = this.state.imgs.slice();
-          imgs.push(source);
-          this.setState({
-            imgs: imgs
-          });
-        }
-      }).catch(error => {
-        this.setModalVisible(false);
-      });
+        });
+      })
+    }).catch(e => {});
 
-      this.uploadTimer = setTimeout(() => {
-        if (this.state.modalVisible) {
-          this.setModalVisible(false);
-          Alert.alert('错误', '请求超时!');
-        }
-      }, 15000);
-    });
+    this.uploadTimer = setTimeout(() => {
+      if (this.state.modalVisible) {
+        this.setModalVisible(false);
+        Alert.alert('错误', '请求超时!');
+      }
+    }, 60000);
   }
 
   onLocationPress() {
