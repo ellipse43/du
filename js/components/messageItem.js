@@ -39,48 +39,6 @@ export default class MessageItem extends React.Component {
     });
   }
 
-  renderCarousel() {
-    return (
-      <Carousel autoplay={false} style={{width: WINDOW_WIDTH, height: WINDOW_HEIGHT}}>
-        {this.state.imgs.map((item, index) => {
-          return (
-            <CacheImage
-              key={index}
-              style={{flex: 1}}
-              resizeMode='contain'
-              source={{uri:`${item}`}}
-              thumbnail={false}
-            />
-          )
-        })}
-      </Carousel>
-    )
-  }
-
-  renderImgs(imgs) {
-    return (
-      <View style={styles.imgs}>
-        {imgs.map((item, index) => {
-          return (
-            <Lightbox
-              navigator={this.props.navigator}
-              swipeToDismiss={true}
-              renderHeader={() => {}}
-              renderContent={this.renderCarousel.bind(this)}
-              key={index}
-              style={styles.imgBox}>
-              <CacheImage
-                style={styles.imgItem}
-                source={{uri: `${item}`}}
-                thumbnail={true}
-              />
-            </Lightbox>
-          )
-        })}
-      </View>
-    )
-  }
-
   render() {
     return (
       <View style={styles.row} key={this.props.rowData.get('ObjectId')} >
@@ -107,18 +65,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 25,
     fontFamily: 'Avenir-Light',
-  },
-  imgs: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  imgBox: {
-    marginTop: 5,
-    marginRight: 5,
-  },
-  imgItem: {
-    width: 100,
-    height: 100,
   },
   createdText: {
     fontSize: 10,

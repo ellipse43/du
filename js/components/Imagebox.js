@@ -42,7 +42,29 @@ class Imagebox extends Component {
     })
   }
 
+  renderImgs(line, imgs) {
+    return (
+      <View style={styles.imgs}>
+        {imgs.map((item, index) => {
+          return (
+            <Animated.View key={`img${index + line * 2}`} style={{marginRight: 5, marginTop: 5}}>
+              <TouchableHighlight
+                onPress={this.open.bind(this, index + line * 2)}>
+                <CacheImage
+                  style={styles.imgItem}
+                  source={{uri: `${item}`}} />
+              </TouchableHighlight>
+            </Animated.View>
+          )
+        })}
+      </View>
+    )
+  }
+
   render() {
+    const imgLineOne = this.props.imgs.slice(0, 2);
+    const imgLineTwo = this.props.imgs.slice(2, 4);
+
     return (
       <View style={styles.container}>
         <Modal animationType={this.state.animationType}
@@ -54,7 +76,7 @@ class Imagebox extends Component {
             <Carousel autoplay={false} style={{width: WINDOW_WIDTH, height: WINDOW_HEIGHT}} chosen={this.state.currentIndex}>
               {this.props.imgs.map((item, index) => {
                 return (
-                  <TouchableWithoutFeedback onPress={this.exit.bind(this)} key={index}>
+                  <TouchableWithoutFeedback onPress={this.exit.bind(this)} key={`carousel${index}`}>
                     <CacheImage
                       style={{flex: 1}}
                       resizeMode='contain'
@@ -67,18 +89,8 @@ class Imagebox extends Component {
             </Carousel>
           </View>
         </Modal>
-        {this.props.imgs.map((item, index) => {
-          return (
-            <Animated.View key={index} style={{marginRight: 5, marginTop: 5}}>
-              <TouchableHighlight
-                onPress={this.open.bind(this, index)}>
-                <CacheImage
-                  style={styles.imgItem}
-                  source={{uri: `${item}`}} />
-              </TouchableHighlight>
-            </Animated.View>
-          )
-        })}
+        {this.renderImgs(0, imgLineOne)}
+        {this.renderImgs(1, imgLineTwo)}
       </View>
     );
   }
@@ -87,7 +99,6 @@ class Imagebox extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
   },
   imgItem: {
     width: 100,
@@ -98,6 +109,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: 'rgba(0, 0, 0, 1)',
+  },
+  imgs: {
+    flexDirection: 'row',
   },
 });
 
