@@ -54,7 +54,7 @@ export default class Message extends React.Component {
   }
 
   save() {
-    if (this.state.content.length < 1) {
+    if (this.state.imgs.length < 1 && this.state.content.length < 1) {
       Alert.alert('警告', '输入字数太少');
       return;
     }
