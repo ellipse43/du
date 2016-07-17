@@ -14,6 +14,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import qiniu from 'react-native-qiniu';
 
+import Calendar from './Calendar';
 import {MessageQuery} from '../utils/Model';
 import {Qiniu} from '../utils/Qiniu';
 import {MMedia} from '../utils/MMedia';
@@ -101,6 +102,8 @@ class Profile extends Component {
               </TouchableOpacity>
             </View>
           </View>
+
+          <Calendar />
         </ScrollView>
       </View>
     );
@@ -135,7 +138,7 @@ const styles = StyleSheet.create({
   panelBtnLabel: {
     fontSize: 12,
     color: '#ABABAB',
-  }
+  },
 });
 
 
