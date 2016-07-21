@@ -81,36 +81,55 @@ export default class Message extends React.Component {
   }
 
   _onImageSelect() {
-    ImagePicker.openPicker({
-      multiple: true,
-      maxFiles: 4 - this.state.imgs.length,
-    }).then(images => {
+    MMedia.showImagePicker((response) => {
       this.setModalVisible(true);
-      let index = 0, length = images.length, sources = [], keys = [];
-      images.map((img, i) => {
-        const key = Qiniu.genImageKey();
-        const source = {uri: img.path.replace('file://', ''), isStatic: true, key: key};
-        keys.push(key);
-        sources.push(source);
-      })
-      images.map((img, i) => {
-        Qiniu.uploadFile(img.path, keys[i]).then(resp => {
-          if (this.state.modalVisible && resp.status == 200) {
-            index += 1;
-            if (index === length) {
-              this.setModalVisible(false);
-              let imgs = this.state.imgs.slice();
-              imgs.push(...sources);
-              this.setState({
-                imgs: imgs,
-              });
-            };
-          }
-        }).catch(error => {
+      const key = Qiniu.genImageKey();
+      const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
+      Qiniu.uploadFile(response.uri, key).then(resp => {
+        if (this.state.modalVisible) {
           this.setModalVisible(false);
-        });
-      })
-    }).catch(e => {});
+          let imgs = this.state.imgs.slice();
+          imgs.push(source);
+          this.setState({
+            imgs: imgs,
+          });
+        }
+      }).catch(e => {
+        this.setModalVisible(false);
+      });
+    }, () => {
+      ImagePicker.openPicker({
+        multiple: true,
+        maxFiles: 4 - this.state.imgs.length,
+      }).then(images => {
+        this.setModalVisible(true);
+        let index = 0, length = images.length, sources = [], keys = [];
+        images.map((img, i) => {
+          const key = Qiniu.genImageKey();
+          const source = {uri: img.path.replace('file://', ''), isStatic: true, key: key};
+          keys.push(key);
+          sources.push(source);
+        })
+        images.map((img, i) => {
+          Qiniu.uploadFile(img.path, keys[i]).then(resp => {
+            if (this.state.modalVisible && resp.status == 200) {
+              index += 1;
+              if (index === length) {
+                this.setModalVisible(false);
+                let imgs = this.state.imgs.slice();
+                imgs.push(...sources);
+                this.setState({
+                  imgs: imgs,
+                });
+              };
+            }
+          }).catch(error => {
+            this.setModalVisible(false);
+          });
+        })
+      }).catch(e => {});
+    });
+
 
     this.uploadTimer = setTimeout(() => {
       if (this.state.modalVisible) {
