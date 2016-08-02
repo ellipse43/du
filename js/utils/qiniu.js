@@ -15,7 +15,10 @@ export class Qiniu {
     return qiniu.rpc.uploadFile(uri, uptoken, {key: key});
   }
 
-  static genImageKey(format='jpeg') {
+  static genFileKey(format='jpeg') {
+    if (['aac', 'jpeg', 'png'].indexOf(format) == -1 ) {
+      throw new Error('不支持文件类型');
+    }
     const date = new Date();
     const prefix = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}/${date.getHours()}/${date.getTime()}/${uuid()}`;
     console.log('prefix', prefix);

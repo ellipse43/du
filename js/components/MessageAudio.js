@@ -23,7 +23,7 @@ import {MessageModel} from '../utils/Model';
 import {MMedia} from '../utils/MMedia';
 import ImagePicker from 'react-native-image-crop-picker';
 
-export default class Message extends React.Component {
+export default class MessageAudio extends React.Component {
 
   static STATUS_LOADING = 'loading';
   static STATUS_ERROR = 'error';
@@ -33,7 +33,7 @@ export default class Message extends React.Component {
     this.state = {
       content: '',
       imgs: [],
-      status: Message.STATUS_LOADING,
+      status: MessageAudio.STATUS_LOADING,
       animationType: 'none',
       modalVisible: false,
       transparent: true,
@@ -46,96 +46,23 @@ export default class Message extends React.Component {
   }
 
   cancel() {
-    if (this.state.content.length > 0 || this.state.imgs.length > 0) {
-
-    }
-    this.props.navigator.pop();
+    this.props.navigator.popToTop();
   }
 
   save() {
-    if (this.state.imgs.length < 1 && this.state.content.length < 1) {
-      Alert.alert('警告', '输入字数太少');
-      return;
-    }
     this.setModalVisible(true);
 
-    const imgs = [];
-    this.state.imgs.forEach((item) => {
-      if (item.key != null) {
-        imgs.push(item.key);
-      }
-    });
-
-    const msg = MessageModel.new({content: this.state.content, imgs: imgs});
+    const msg = MessageModel.new({content: this.state.content, audio: this.props.audioKey, type: 'audio'});
     msg.set('ACL', new AV.ACL(this.props.currentUser));
 
     this.props.onMessageCreate(msg);
 
     msg.save().then((msg) => {
       this.setModalVisible(false);
-      this.props.navigator.pop();
+      this.props.navigator.popToTop();
     }, (error) => {
-      this.setState({status: Message.STATUS_ERROR});
+      this.setState({status: MessageAudio.STATUS_ERROR});
     });
-  }
-
-  _onImageSelect() {
-    MMedia.showImagePicker((response) => {
-      this.setModalVisible(true);
-      const key = Qiniu.genFileKey();
-      const source = {uri: response.uri.replace('file://', ''), isStatic: true, key: key};
-      Qiniu.uploadFile(response.uri, key).then(resp => {
-        if (this.state.modalVisible) {
-          this.setModalVisible(false);
-          let imgs = this.state.imgs.slice();
-          imgs.push(source);
-          this.setState({
-            imgs: imgs,
-          });
-        }
-      }).catch(e => {
-        this.setModalVisible(false);
-      });
-    }, () => {
-      ImagePicker.openPicker({
-        multiple: true,
-        maxFiles: 4 - this.state.imgs.length,
-      }).then(images => {
-        this.setModalVisible(true);
-        let index = 0, length = images.length, sources = [], keys = [];
-        images.map((img, i) => {
-          const key = Qiniu.genFileKey();
-          const source = {uri: img.path.replace('file://', ''), isStatic: true, key: key};
-          keys.push(key);
-          sources.push(source);
-        })
-        images.map((img, i) => {
-          Qiniu.uploadFile(img.path, keys[i]).then(resp => {
-            if (this.state.modalVisible && resp.status == 200) {
-              index += 1;
-              if (index === length) {
-                this.setModalVisible(false);
-                let imgs = this.state.imgs.slice();
-                imgs.push(...sources);
-                this.setState({
-                  imgs: imgs,
-                });
-              };
-            }
-          }).catch(error => {
-            this.setModalVisible(false);
-          });
-        })
-      }).catch(e => {});
-    });
-
-
-    this.uploadTimer = setTimeout(() => {
-      if (this.state.modalVisible) {
-        this.setModalVisible(false);
-        Alert.alert('错误', '请求超时!');
-      }
-    }, 60000);
   }
 
   onLocationPress() {
@@ -156,18 +83,13 @@ export default class Message extends React.Component {
   }
 
   render() {
-    let imgBtn = null;
-    if (this.state.imgs.length < 4) {
-      imgBtn = <TouchableOpacity style={styles.imageSelect} onPress={this._onImageSelect.bind(this)} ><Text style={styles.addText} >+</Text></TouchableOpacity>
-    }
-
     let modalContent = null;
-    if (this.state.status === Message.STATUS_LOADING) {
+    if (this.state.status === MessageAudio.STATUS_LOADING) {
       modalContent = <ActivityIndicatorIOS size='large' animating={true} />
-    } else if (this.status === Message.STATUS_ERROR) {
+    } else if (this.status === MessageAudio.STATUS_ERROR) {
       modalContent = <Text>加载错误</Text>;
       this.loadTimer = setTimeout(() => {
-        this.setState({status: Message.STATUS_LOADING});
+        this.setState({status: MessageAudio.STATUS_LOADING});
         this.setModalVisible(false);
       }, 1);
     }
@@ -199,17 +121,6 @@ export default class Message extends React.Component {
                 <Icon name='ios-arrow-forward' size={18} color={'#CCCCCC'} style={{marginRight: 10}}></Icon>
               </View>
             </TouchableOpacity>
-          </View>
-          <View style={styles.imageTool}>
-          {this.state.imgs.map((item, index) => {
-            return (
-              <Image
-                key={index}
-                style={styles.avatar}
-                source={{uri: item.uri}} />
-            )
-          })}
-          {imgBtn}
           </View>
         </ScrollView>
       </View>

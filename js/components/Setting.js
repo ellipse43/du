@@ -55,7 +55,7 @@ class Setting extends Component {
   onAvatarPress() {
     MMedia.showImagePicker((response) => {
       StatusBar.setNetworkActivityIndicatorVisible(true);
-      const key = Qiniu.genImageKey();
+      const key = Qiniu.genFileKey();
       Qiniu.uploadFile(response.uri, key).then(resp => {
         let user = this.state.currentUser;
         if (user) {
