@@ -10,9 +10,6 @@ export class MMedia {
       cancelButtonTitle: '取消',
       takePhotoButtonTitle: '拍照',
       chooseFromLibraryButtonTitle: '',
-      customButtons: {
-        '照片': 'photo',
-      },
       cameraType: '返回',
       mediaType: '照片',
       videoQuality: 'high',
@@ -28,6 +25,13 @@ export class MMedia {
         path: 'images'
       }
     };
+    if (customEvent) {
+      options['customButtons'] = {
+        '选择照片': 'photo',
+      }
+    } else {
+      options['chooseFromLibraryButtonTitle'] = '选择照片'
+    }
     NativeModules.ImagePickerManager.showImagePicker(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
